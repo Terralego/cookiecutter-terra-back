@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 set -e
 readlinkf() {
     if ( uname | egrep -iq "darwin|bsd" );then
