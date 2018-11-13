@@ -1,0 +1,32 @@
+version: '3.7'
+x-images:
+  bypass: &bypass
+    command: echo "not started"
+    restart: "no"
+    entrypoint: echo "not started"
+services:
+  backup: {<<: [ *bypass ]}
+  nginx: {<<: [ *bypass ]}
+  backup: {<<: [ *bypass ]}
+  django:
+    environment:
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-project.settings.dev}
+      - NO_MIGRATE=1
+      - NO_COLLECT_STATIC=1
+      - NO_GUNICORN=1
+    command: "gosu django ../start.sh"
+    volumes:
+      - ./prod/sudoer://etc/sudoers.d/django
+      - ./lib:/code/lib
+      - ./src:/code/src
+      - ./private:/code/private
+      - ./tox.ini:/code/tox.ini
+      - ./prod/init.sh:/code/init.sh
+      - ./prod/start.sh:/code/start.sh
+      - ./.tox:/code/.tox
+    ports:
+      - "8000:8000"
+volumes:
+  tox:
+    name: "${DJANGO_NAME}_tox"
+    external: false

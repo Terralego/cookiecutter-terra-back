@@ -1,0 +1,23 @@
+---
+cops_deploy_ssh_key_paths:
+  # replace by your env id used in the host definition inside your former inventory
+  deploy:
+    path: "{{'{{'}}{{'local/.ssh/deploy'|copsf_abspath}}"
+    pub: |-
+      ssh-rsa xxx deploy
+    private: |-
+      -----BEGIN RSA PRIVATE KEY-----
+      xxx
+      -----END RSA PRIVATE KEY-----
+cops_mixity_registries:
+- username: "userA"
+  registry: "{{cookiecutter.docker_registry}}"
+  password: "superpwd"
+terralegoback_servers: terralegoback_servers
+# copy this file instead of symlinking
+cops_terralego_name: "{{cookiecutter.name}}"
+cops_terralego_tld_domain: "{{cookiecutter.tld_domain}}"
+cops_terralego_mail_domain: "{{ cookiecutter.mail_domain }}"
+cops_terralego_docker_image: "{{cookiecutter.docker_image}}"
+cops_terralego_gitref: "{{'{{'}}lookup('env', 'CI_COMMIT_TAG_NAME') or lookup('env', 'CI_COMMIT_REF_NAME') or 'latest'}}"
+cops_terralego_docker_tag: "{{'{{'}}cops_terralego_gitref}}" 
