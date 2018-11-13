@@ -1,0 +1,4 @@
+---
+cops_terralego_deploy_env: prod
+cops_terralego_hostname:  "{{cookiecutter.prod_back_domain}}"
+cops_terralego_front_hostname: "{{cookiecutter.prod_front_domain}}"
