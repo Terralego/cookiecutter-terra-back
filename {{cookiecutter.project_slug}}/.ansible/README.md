@@ -29,7 +29,9 @@ If tests are ok:
 
 - If it is master or a tag, the image is pushed to the registry
     with the appropriate tag
-- Otherwise ... ????
+- Otherwise, on any other branch, you can manually trigger a manual job to 
+ build the dev tag that will be autodeployed at a later stage on the 
+ dev/staging environment.
 
 ## In all cases, we teardown the test resources:
 
