@@ -1,11 +1,12 @@
 #!/bin/bash
 set -e
+W="$(dirname $(readlink -f $0))"
 
 SHELL_DEBUG=${SHELL_DEBUG-${SHELLDEBUG}}
 if  [[ -n $SHELL_DEBUG ]];then set -x;fi
 
 shopt -s extglob
-cd "$(dirname $(readlink -f $0))/.."
+
 APP=django
 APP_USER=${APP_USER:-${APP}}
 APP_CONTAINER=${APP_CONTAINER:-${APP}}
@@ -137,7 +138,7 @@ do_usage() {
     "
 }
 
-init() {
+do_init() {
     for i in $INIT_FILES;do
         if [ ! -e $i ];then cp -fv "$i.dist" "$i";fi
         $EDITOR $i
@@ -161,14 +162,17 @@ do_yamldump() {
     $@ $bargs
 }
 
-args=${@:-usage}
-actions="@(shell|usage|usershell|usage|install_docker|setup_corpusops"
-actions="$actions|coverage|linting|manage|python|yamldump"
-actions="$actions|init|up|fg|pull|build|runserver|down|run_server|tests|test)"
-action=${1-}
-if [[ -n $@ ]];then shift;fi
-case $action in
-    $actions) do_$action $@;;
-    *) do_usage;;
-esac
-exit $?
+do_main() {
+	local args=${@:-usage}
+	local actions="@(shell|usage|usershell|usage|install_docker|setup_corpusops"
+	actions="$actions|coverage|linting|manage|python|yamldump"
+	actions="$actions|init|up|fg|pull|build|runserver|down|run_server|tests|test)"
+	action=${1-}
+	if [[ -n $@ ]];then shift;fi
+	case $action in
+		$actions) do_$action $@;;
+		*) do_usage;;
+	esac
+}
+cd "$W"
+do_main "$@"
