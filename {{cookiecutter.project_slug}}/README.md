@@ -100,10 +100,10 @@ After a last verification of the files, to run with docker, just type:
 
 **⚠️ Remember ⚠️** to use `./control.sh up` to start the stack before.
 
-## Rebuild/Refresh local image in dev
+## Rebuild/Refresh local docker image in dev
 
 ```sh
-control.sh buildimage
+control.sh buildimages
 ```
 
 ## Calling Django manage commands
