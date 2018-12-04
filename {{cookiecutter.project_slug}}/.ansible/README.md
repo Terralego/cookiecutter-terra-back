@@ -40,7 +40,7 @@ If tests are ok:
 
 ## Deployment
 
-- We deploy using an ansible playbook
+- We deploy using an [ansible playbook](README.md#details)
 - For dev environment:
     - we autodeploy master and tags for dev environment
     - we await for manual operation to deploy any other branch/PR.
@@ -144,14 +144,14 @@ When the remaining hard drive space happen to be low:
 The high level infrastructure:
 
 ```
-    ~~~~~~~                                             /\
-/ ^   ^ \                  +------------+           //\\
-| 0   0 |                  |  gitlab &  |          /// \\
-    \  <   /                  |  gitlab-ci |<--<--<- //~~~~~\
-    \____/                   +------------+         / ^   ^ \ -- ~ developers
-        \                           |              | 0 < 0 |
+  ~~~~~~~                                             /\
+ / ^   ^ \                  +------------+           //\\
+ | 0   0 |                  |  gitlab &  |          /// \\
+  \  <   /                  |  gitlab-ci |<--<--<- //~~~~~\
+   \____/                   +------------+        / ^   ^ \ -- ~ developers
+       \                           |              | 0 < 0 |
         users >---->-- internet ------->------\   \   -  /
-            |                         |           \   \____/
+         |                         |           \   \____/
 +++++++++++++++++++++++++++++++++++|+++++     +++++++++++++++++++++++++++++++
 +  Preprod Cluster                 |    +     +  Prod Cluster               +
 +     ssh: port: 22                |    +     +   ssh: port 22              +
@@ -173,10 +173,10 @@ The high level infrastructure:
 +   +-----|    - app in docker    |   | +     +                             +|
 +         +++++++++++++++++++++++++   | +     +                             +|
 ++++++++++++++++++++++|+++++++++++++++|++     +++++++++++++++++++++++++++++++|
-                        |               |  +-----------------+                 |
-                        |               +->| Docker Registry |->-->-->-->-->-->+
-                        +-<-<-<-<-<-<-<-<--|                 |
-                                            +-----------------+
+                      |               |  +-----------------+                 |
+                      |               +->| Docker Registry |->-->-->-->-->-->+
+                      +-<-<-<-<-<-<-<-<--|                 |
+                                         +-----------------+
 ```
 
 - The LXC CI running must be accessible in push from gitlab-ci
@@ -202,7 +202,20 @@ The high level infrastructure:
             +--- backup
             +--- ...
     ```
-    
+
 ## Bootstrap env
 
 [see install log](./log_install.md)
+
+## <a name="details"/>Ansible deployment steps detail
+
+The ansible playbook do:
+- Sync code using rsync
+- Generate
+  - each docker env file (.env, docker.env)
+  - Any app settings file
+  - We try a most to put everything as ENV Variables to embrace the 12Factors principle.
+- Pull images
+- Install systemd launcher and start it
+- Restart explictly each docker services
+- Cleanup stale docker volumes
