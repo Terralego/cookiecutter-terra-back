@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
+
 SHELL_DEBUG=${SHELL_DEBUG-${SHELLDEBUG}}
 if  [[ -n $SHELL_DEBUG ]];then set -x;fi
+
 shopt -s extglob
 cd "$(dirname $(readlink -f $0))/.."
 APP=django
@@ -15,9 +17,13 @@ EDITOR=${EDITOR:-vim}
 DC="docker-compose -f docker-compose.yml -f docker-compose-dev.yml"
 DCB="$DC -f docker-compose-build.yml"
 INIT_FILES=".env docker.env src/mixity/settings/local.py"
+
 log(){ echo "$@">&2;}
+
 vv() { log "$@";"$@";}
+
 dvv() { if [[ -n $DEBUG ]];then log "$@";fi;"$@";}
+
 _shell() {
     local container="$1" user="$2"
     shift;shift
@@ -31,31 +37,39 @@ _shell() {
     fi
     "$@"
 }
+
 do_usershell() { _shell $APP_CONTAINER $APP_USER $@;}
+
 do_shell()     { _shell $APP_CONTAINER root      $@;}
+
 do_install_docker() {
     vv .ansible/scripts/download_corpusops.sh
     vv .ansible/scripts/setup_corpusops.sh
     vv local/*/bin/cops_apply_role --become \
         local/*/*/corpusops.roles/services_virt_docker/role.yml
 }
+
 do_pull() {
     vv $DC pull $@
 }
+
 do_up() {
     local up_args=$@
     set -- vv $DC up
     if [[ -z $NO_BACKGROUND ]];then bargs="-d $bargs";fi
     $@ $bargs
 }
+
 do_down() {
     local down_args=$@
     set -- vv $DC down
     $@ $bargs
 }
+
 stop_containers() {
     for i in ${@:-$APP_CONTAINER};do $DC stop $i;done
 }
+
 do_runserver() {
     local bargs=${@:-0.0.0.0:8000}
     stop_containers
@@ -64,11 +78,14 @@ do_runserver() {
 	&& ./manage.py migrate
 	&& ./manage.py runserver $bargs"
 }
+
 do_run_server() { do_runserver $@; }
+
 do_fg() {
     stop_containers
     vv $DC run --rm --no-deps --service-ports $APP_CONTAINER $@
 }
+
 do_build() {
     local bargs="$@" bp=""
     if [[ -n $BUILD_PARALLEL ]];then
@@ -80,6 +97,7 @@ do_build() {
     fi
     $@ $bargs
 }
+
 do_test() {
     local bargs=${@:-tests}
     stop_containers
@@ -88,9 +106,13 @@ do_test() {
         && gosu django ../venv/bin/tox -c ../tox.ini -e $bargs"
     "$@"
 }
+
 do_tests() { do_test $@; }
+
 do_linting() { do_test linting; }
+
 do_coverage() { do_test coverage; }
+
 do_usage() {
     echo "$0:
     install_docker: install docker and docker compose on ubuntu
@@ -114,18 +136,22 @@ do_usage() {
         \$APP_USER: $APP_USER
     "
 }
+
 init() {
     for i in $INIT_FILES;do
         if [ ! -e $i ];then cp -fv "$i.dist" "$i";fi
         $EDITOR $i
     done
 }
+
 do_python() {
     do_usershell ../venv/bin/python $@
 }
+
 do_manage() {
     do_python manage.py $@
 }
+
 do_yamldump() {
     local bargs=$@
     if [ -e local/corpusops.bootstrap/venv/bin/activate ];then
@@ -134,6 +160,7 @@ do_yamldump() {
     set -- .ansible/scripts/yamldump.py
     $@ $bargs
 }
+
 args=${@:-usage}
 actions="@(shell|usage|usershell|usage|install_docker|setup_corpusops"
 actions="$actions|coverage|linting|manage|python|yamldump"
@@ -144,4 +171,4 @@ case $action in
     $actions) do_$action $@;;
     *) do_usage;;
 esac
-exit $? 
+exit $?
