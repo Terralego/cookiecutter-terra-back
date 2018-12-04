@@ -77,8 +77,6 @@ After a last verification of the files, to run with docker, just type:
 ./control.sh up # Should be launched once each time you want to start the stack
 ```
 
-**⚠️ See also ⚠️** the makinacorpus doc in the docs/tools/dockerregistry section.
-
 ## Launch app as foreground
 
 ```bash
