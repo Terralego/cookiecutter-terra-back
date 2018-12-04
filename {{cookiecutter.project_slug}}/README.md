@@ -1,110 +1,144 @@
-## Development usage
+# Initialise your development environment
 
-### Prerequisites:
-#### Install docker and docker compose
-- if you are under debian/ubuntu/mint/centos you can do the following:
+All following commands must be run only once at project installation.
 
-     ```sh
-     .ansible/scripts/download_corpusops.sh
-     .ansible/scripts/setup_corpusops.sh
-     local/*/bin/cops_apply_role --become \
-        local/*/*/corpusops.roles/services_virt_docker/role.yml
-     ```
-- or follow procedures for
+## Install docker and docker compose
+
+if you are under debian/ubuntu/mint/centos you can do the following:
+
+```sh
+.ansible/scripts/download_corpusops.sh
+.ansible/scripts/setup_corpusops.sh
+local/*/bin/cops_apply_role --become \
+    local/*/*/corpusops.roles/services_virt_docker/role.yml
+```
+
+... or follow official procedures for
   [docker](https://docs.docker.com/install/#releases) and
   [docker-compose](https://docs.docker.com/compose/install/).
 
-## Use your development environment
-### git fOo
-- If your project has submodules, never forget to grab them
+## First clone
 
-    ```sh
-    git submodule init --recursive  # only the fist time
-    git submodule upate
-    ```
-
-### sbin/manage.sh
-The stack entry point helper which has some neat features
-
-```
-sbin/control.sh usage
+```sh
+git clone --recursive git@gitlab.com:dantooin_devs/mixity.git
+submodule init --recursive  # only the fist time
+git submodule upate
 ```
 
-### Configuration
-- Use the wrapper to init configuration files from their ``.dist`` counterpart and adapt them to your needs.
+## Configuration
 
-    ```bash
-    ./sbin/control.sh init
-    ```
-    - Note that You may have to add `0.0.0.0` to `ALLOWED_HOSTS` in `local.py`.
-### Login to the app docker registry
-- After a last verification of the files, to run with docker, just type :
+Use the wrapper to init configuration files from their ``.dist`` counterpart 
+and adapt them to your needs.
 
-    ```bash
-    docker login registry.gitlab.com  # use your gitlab user
-    ```
-- See also the
-  [project docker registry](https://gitlab.com/dantooin_devs/mixity/container_registry)
+```bash
+./control.sh init
+```
 
-### Start the stack
+**Hint**: You may have to add `0.0.0.0` to `ALLOWED_HOSTS` in `local.py`.
+
+## Login to the app docker registry
+
+You need to login to our docker registry to be able to use it:
+
+```bash
+docker login {{cookiecutter.docker_registry}}  # use your gitlab user
+```
+
+**⚠️ See also ⚠️** the makinacorpus doc in the docs/tools/dockerregistry section.
+
+# Use your development environment
+
+## Update submodules
+
+Never forget to grab and update regulary the project submodules:
+
+```sh
+git pull
+git submodule init --recursive  # only the fist time
+git submodule upate
+```
+
+## Control.sh helper
+
+You may use the stack entry point helper which has some neat helpers but feel 
+free to use docker command if you know what your are doing.
+
+```bash
+./control.sh usage # Show all available commands
+```
+
+## Start the stack
+
+After a last verification of the files, to run with docker, just type:
+
 ```bash
 # First time you download the app, or sometime to refresh the image
-sbin/control.sh pull
-sbin/control.sh up
+./control.sh pull # Call the docker compose pull command
+./control.sh up # Should be launched once each time you want to start the stack
 ```
-### Launch app
+
+**⚠️ See also ⚠️** the makinacorpus doc in the docs/tools/dockerregistry section.
+
+## Launch app as foreground
+
 ```bash
-sbin/control.sh up  # only first time
-sbin/control.sh fg
+./control.sh fg
 ```
-- ⚠️ makinacorpus devs ⚠️: look to docs/tools/dockerregistry section.
-### Interactively manipulate the app container
+
+**⚠️ Remember ⚠️** to use `./control.sh up` to start the stack before.
+
+## Start a shell inside the django container
+
 - for user shell
 
     ```sh
-    sbin/control.sh up  # only first time
-    scripts/control.sh usershell
+    ./control.sh usershell
     ```
 - for root shell
 
     ```sh
-    sbin/control.sh up  # only first time
-    scripts/control.sh shell
+    ./control.sh shell
     ```
 
+**⚠️ Remember ⚠️** to use `./control.sh up` to start the stack before.
+
 ## Rebuild/Refresh local image in dev
+
 ```sh
-sbin/control.sh build
+control.sh buildimage
 ```
 
-### Applying Django migrations
+## Calling Django manage commands
 
 ```sh
-sbin/control.sh up  # only first time
-sbin/control.sh manage migrate
+./control.sh manage [options]
+# For instance:
+# ./control.sh manage migrate
+# ./control.sh manage shell
+# ./control.sh manage createsuperuser
+# ...
 ```
 
-### Create superuser
-```sh
-sbin/control.sh up  # only first time
-sbin/control.sh manage createsuperuser
-```
+**⚠️ Remember ⚠️** to use `./control.sh up` to start the stack before.
 
-### Run tests
+## Run tests
+
 ```sh
-sbin/control.sh up  # only first time
-sbin/control.sh tests
+control.sh tests
 # also consider: linting|coverage
 ```
 
-### Docker volumes
-- Your application extensivly use docker volumes. From times to times you may need to erase them (eg: burn the db to start from fresh)
+**⚠️ Remember ⚠️** to use `./control.sh up` to start the stack before.
 
-    ```sh
-    docker volume ls  # hint: |grep \$app
-    docker volume help
-    docker volume rm $id
-    ```
+## Docker volumes
 
-### Doc for deployment on environments
+Your application extensivly use docker volumes. From times to times you may 
+need to erase them (eg: burn the db to start from fresh)
+
+```sh
+docker volume ls  # hint: |grep \$app
+docker volume rm $id
+```
+
+## Doc for deployment on environments
 - [See here](./.ansible/README.md)
