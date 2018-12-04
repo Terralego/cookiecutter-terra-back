@@ -1,8 +1,8 @@
 # Deployment documentation
 
-- [Automatic deployment](README.md#automatic)
-- [Manual deployment](README.md#manual)
-- [More informations](README.md#moreinformation)
+- [Automatic deployment](./README.md#automatic)
+- [Manual deployment](./README.md#manual)
+- [More informations](./README.md#moreinformation)
 
 # <a name="automatic"/>The CI/CD workflow aka. automatic deployment
 
@@ -40,7 +40,7 @@ If tests are ok:
 
 ## Deployment
 
-- We deploy using an [ansible playbook](README.md#details)
+- We deploy using an [ansible playbook](./README.md#details)
 - For dev environment:
     - we autodeploy master and tags for dev environment
     - we await for manual operation to deploy any other branch/PR.
