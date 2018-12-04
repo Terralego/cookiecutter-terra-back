@@ -4,12 +4,12 @@
 #### Install docker and docker compose
 - if you are under debian/ubuntu/mint/centos you can do the following:
 
-    ```sh
+```sh
     .ansible/scripts/download_corpusops.sh
     .ansible/scripts/setup_corpusops.sh
     local/*/bin/cops_apply_role --become \
         local/*/*/corpusops.roles/services_virt_docker/role.yml
-    ```
+```
 - or follow procedures for
   [docker](https://docs.docker.com/install/#releases) and
   [docker-compose](https://docs.docker.com/compose/install/).
