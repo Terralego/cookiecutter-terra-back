@@ -9,7 +9,7 @@ cops_deploy_ssh_key_paths:
       -----BEGIN RSA PRIVATE KEY-----
       xxx
       -----END RSA PRIVATE KEY-----
-cops_mixity_registries:
+cops_terralego_registries:
 - username: "userA"
   registry: "{{cookiecutter.docker_registry}}"
   password: "superpwd"
