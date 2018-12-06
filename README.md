@@ -12,7 +12,7 @@ virtualenv --python=python3 ~/tools/cookiecutter
 ## Create back project
 
 - create on gitlab your project
-- then locally (replace with your valures)
+- then locally (replace with your values)
 
     ```sh
     cd ~/.cookiecutters/cookiecutter-terra-back \
