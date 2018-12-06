@@ -30,10 +30,6 @@ SYMLINKS = {
     ".ansible/playbooks/site.yml": "../../local/terra-back-deploy/.ansible/playbooks/site.yml",  #noqa
     "crontab": "local/terra-back-deploy/crontab",  #noqa
     "requirements.txt": "local/terra-back-deploy/requirements.txt",  #noqa
-    "prod/sudoer": "../local/terra-back-deploy/prod/sudoer",  #noqa
-    "prod/init.sh": "../local/terra-back-deploy/prod/init.sh",  #noqa
-    "prod/start.sh": "../local/terra-back-deploy/prod/start.sh",  #noqa
-    "prod/etc/nginx/vhost.conf.template": "../../../local/terra-back-deploy/prod/etc/nginx/vhost.conf.template",  #noqa
     "tox.ini": "local/terra-back-deploy/tox.ini",  #noqa
     "requirements-dev.txt": "local/terra-back-deploy/requirements-dev.txt",  #noqa
     "apt.txt": "local/terra-back-deploy/apt.txt",  #noqa
