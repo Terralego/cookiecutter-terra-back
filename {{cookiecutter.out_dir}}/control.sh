@@ -17,7 +17,7 @@ BUILD_CONTAINERS="cron $APP_CONTAINER"
 EDITOR=${EDITOR:-vim}
 DC="docker-compose -f docker-compose.yml -f docker-compose-dev.yml"
 DCB="$DC -f docker-compose-build.yml"
-INIT_FILES=".env docker.env src/mixity/settings/local.py"
+DIST_FILES_FOLDERS=". src/*/settings"
 
 log(){ echo "$@">&2;}
 
@@ -139,8 +139,17 @@ do_usage() {
 }
 
 do_init() {
-    for i in $INIT_FILES;do
-        if [ ! -e $i ];then cp -fv "$i.dist" "$i";fi
+    for d in  $( \
+        find $DIST_FILES_FOLDERS -mindepth 1 -maxdepth 1 -name "*.dist" -type f )
+    do
+        i=$(basename $d .dist)
+        if [ ! -e $i ];then
+            cp -fv "$d" "$i"
+        else
+            if ! ( diff -Nu "$d" "$i" || /bin/true );then
+                echo "Press enter to continue";read -t 120
+            fi
+        fi
         $EDITOR $i
     done
 }
