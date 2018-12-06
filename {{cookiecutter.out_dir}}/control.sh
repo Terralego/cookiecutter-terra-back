@@ -15,9 +15,16 @@ NO_BACKGROUND=${NO_BACKGROUND-}
 BUILD_PARALLEL=${BUILD_PARALLEL:-1}
 BUILD_CONTAINERS="cron $APP_CONTAINER"
 EDITOR=${EDITOR:-vim}
-DC="docker-compose -f docker-compose.yml -f docker-compose-dev.yml"
-DCB="$DC -f docker-compose-build.yml"
 DIST_FILES_FOLDERS=". src/*/settings"
+
+set_dc() {
+    local COMPOSE_FILES="${@:-docker-compose.yml docker-compose-dev.yml}"
+    DC=${COMPOSE_COMMAND:-docker-compose}
+    for i in $COMPOSE_FILES;do
+        DC="${DC} -f $i"
+    done
+    DCB="$DC -f docker-compose-build.yml"
+}
 
 log(){ echo "$@">&2;}
 
@@ -55,14 +62,14 @@ do_pull() {
 }
 
 do_up() {
-    local up_args=$@
+    local bars=$@
     set -- vv $DC up
     if [[ -z $NO_BACKGROUND ]];then bargs="-d $bargs";fi
     $@ $bargs
 }
 
 do_down() {
-    local down_args=$@
+    local bargs=$@
     set -- vv $DC down
     $@ $bargs
 }
@@ -75,9 +82,9 @@ do_runserver() {
     local bargs=${@:-0.0.0.0:8000}
     stop_containers
     do_shell \
-	". ../venv/bin/activate
-	&& ./manage.py migrate
-	&& ./manage.py runserver $bargs"
+    ". ../venv/bin/activate
+    && ./manage.py migrate
+    && ./manage.py runserver $bargs"
 }
 
 do_run_server() { do_runserver $@; }
@@ -146,7 +153,7 @@ do_init() {
         if [ ! -e $i ];then
             cp -fv "$d" "$i"
         else
-            if ! ( diff -Nu "$d" "$i" || /bin/true );then
+            if ! ( diff -Nu "$d" "$i" );then
                 echo "Press enter to continue";read -t 120
             fi
         fi
@@ -172,16 +179,17 @@ do_yamldump() {
 }
 
 do_main() {
-	local args=${@:-usage}
-	local actions="@(shell|usage|usershell|usage|install_docker|setup_corpusops"
-	actions="$actions|coverage|linting|manage|python|yamldump"
-	actions="$actions|init|up|fg|pull|build|runserver|down|run_server|tests|test)"
-	action=${1-}
-	if [[ -n $@ ]];then shift;fi
-	case $action in
-		$actions) do_$action $@;;
-		*) do_usage;;
-	esac
+    local args=${@:-usage}
+    local actions="@(shell|usage|usershell|usage|install_docker|setup_corpusops"
+    actions="$actions|coverage|linting|manage|python|yamldump"
+    actions="$actions|init|up|fg|pull|build|runserver|down|run_server|tests|test)"
+    action=${1-}
+    if [[ -n $@ ]];then shift;fi
+    set_dc
+    case $action in
+        $actions) do_$action $@;;
+        *) do_usage;;
+    esac
 }
 cd "$W"
 do_main "$@"
