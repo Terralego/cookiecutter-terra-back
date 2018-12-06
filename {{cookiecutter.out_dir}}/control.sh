@@ -74,6 +74,12 @@ do_down() {
     $@ $bargs
 }
 
+do_stop() {
+    local bargs=$@
+    set -- vv $DC stop
+    $@ $bargs
+}
+
 stop_containers() {
     for i in ${@:-$APP_CONTAINER};do $DC stop $i;done
 }
@@ -128,6 +134,7 @@ do_usage() {
     pull [\$args]: pull stack container images
     up [\$args]: start stack
     down [\$args]: down stack
+    stop [\$args]: stop containers
     tests: run tests
     linting: run linting tests
     coverage: run coverage tests
@@ -181,7 +188,7 @@ do_yamldump() {
 do_main() {
     local args=${@:-usage}
     local actions="@(shell|usage|usershell|usage|install_docker|setup_corpusops"
-    actions="$actions|coverage|linting|manage|python|yamldump"
+    actions="$actions|coverage|linting|manage|python|yamldump|stop"
     actions="$actions|init|up|fg|pull|build|runserver|down|run_server|tests|test)"
     action=${1-}
     if [[ -n $@ ]];then shift;fi
