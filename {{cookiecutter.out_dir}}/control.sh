@@ -142,7 +142,7 @@ do_init() {
     for d in  $( \
         find $DIST_FILES_FOLDERS -mindepth 1 -maxdepth 1 -name "*.dist" -type f )
     do
-        i=$(basename $d .dist)
+        i="$(dirname $d)/$(basename $d .dist)"
         if [ ! -e $i ];then
             cp -fv "$d" "$i"
         else
