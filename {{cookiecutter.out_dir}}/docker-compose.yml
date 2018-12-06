@@ -48,10 +48,10 @@ services:
       /bin/sh -c
       "envsubst '
       $$FRONT_URL
-      '< /etc/nginx/conf.d/terralego.conf.template
+      '< /etc/nginx/conf.d/vhost.conf.template
       > /etc/nginx/conf.d/default.conf
       && nginx -g 'daemon off;'"
-      # Replace hostname in terralego.conf
+      # Replace hostname in vhost.conf
   django:
     <<: [ *django ]
   cron:

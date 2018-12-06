@@ -1,18 +1,16 @@
 version: '3.7'
-x-django-vol: &vol
+x-django: &django
   volumes:
   - ./local.py:/code/src/project/settings/local.py
+  environment:
+  - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-project.settings.prod}
 services:
   nginx:
     ports:
     - 80:80
   cron:
-    <<: [ *vol ]
-    environment:
-    - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-project.settings.prod}
+    <<: [ *django ]
   django:
-    <<: [ *vol ]
+    <<: [ *django ]
     ports:
     - "8000:8000"
-    environment:
-    - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-project.settings.prod}
