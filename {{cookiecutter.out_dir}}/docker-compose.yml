@@ -40,7 +40,7 @@ services:
     depends_on:
       - django
     volumes:
-      - ./prod/etc/nginx/vhost.conf.template:/etc/nginx/conf.d/vhost.conf.template
+      - ./local/terra-back-deploy/prod/etc/nginx/vhost.conf.template:/etc/nginx/conf.d/vhost.conf.template
       - mediafiles:/public/media/:ro
       - statics:/public/static/
       - logs:/logs/

@@ -16,14 +16,14 @@ services:
       - NO_GUNICORN=1
     command: "gosu django ../start.sh"
     volumes:
-      - ./prod/sudoer://etc/sudoers.d/django
+      - ./local/terra-back-deploy/prod/sudoer://etc/sudoers.d/django
       - ./lib:/code/lib
       - ./local:/code/local
       - ./src:/code/src
       - ./private:/code/private
       - ./tox.ini:/code/tox.ini
-      - ./prod/init.sh:/code/init.sh
-      - ./prod/start.sh:/code/start.sh
+      - ./local/terra-back-deploy/prod/init.sh:/code/init.sh
+      - ./local/terra-back-deploy/prod/start.sh:/code/start.sh
       - ./.tox:/code/.tox
       - ./requirements.txt:/code/requirements.txt
       - ./requirements-dev.txt:/code/requirements-dev.txt
