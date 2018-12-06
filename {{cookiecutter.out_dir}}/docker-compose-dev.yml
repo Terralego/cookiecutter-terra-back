@@ -18,6 +18,7 @@ services:
     volumes:
       - ./prod/sudoer://etc/sudoers.d/django
       - ./lib:/code/lib
+      - ./local:/code/local
       - ./src:/code/src
       - ./private:/code/private
       - ./tox.ini:/code/tox.ini
