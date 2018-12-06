@@ -15,6 +15,7 @@ __pycache__
 
 # Virtualenv
 /venv/
+/.tox
 
 # corpusops & ansible
 *.retry
