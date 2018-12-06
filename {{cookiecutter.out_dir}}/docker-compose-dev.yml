@@ -29,7 +29,3 @@ services:
       - ./requirements-dev.txt:/code/requirements-dev.txt
     ports:
       - "8000:8000"
-volumes:
-  tox:
-    name: "${DJANGO_NAME}_tox"
-    external: false
