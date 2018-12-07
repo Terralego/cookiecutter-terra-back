@@ -79,6 +79,10 @@ variables:
 # /!\  /!\  /!\
 #
 before_script:
+- &pullsubmodules
+    cd lib/terra-back && git fetch origin && git reset --hard $TERRABACK_VERSION && cd -
+    &&
+    cd local/terra-back-deploy && git fetch origin && git reset --hard $TERRABACK_DEPLOY_VERSION && cd -
 - for i in
     /cache/$CI_PROJECT_PATH_SLUG/docker-images
     /cache/$CI_PROJECT_PATH_SLUG/apt
