@@ -2,6 +2,14 @@
 
 All following commands must be run only once at project installation.
 
+## First clone
+
+```sh
+git clone --recursive {{cookiecutter.git_url}}
+git submodule init --recursive  # only the fist time
+git submodule upate
+```
+
 ## Install docker and docker compose
 
 if you are under debian/ubuntu/mint/centos you can do the following:
@@ -16,14 +24,6 @@ local/*/bin/cops_apply_role --become \
 ... or follow official procedures for
   [docker](https://docs.docker.com/install/#releases) and
   [docker-compose](https://docs.docker.com/compose/install/).
-
-## First clone
-
-```sh
-git clone --recursive {{cookiecutter.git_url}}
-git submodule init --recursive  # only the fist time
-git submodule upate
-```
 
 ## Configuration
 

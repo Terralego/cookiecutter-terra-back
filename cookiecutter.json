@@ -4,14 +4,23 @@
     "out_dir": ".",
     "tld_domain": "example.com",
     "app_suffix": "-back",
-    "dev_front_domain": "dev-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
+
     "dev_back_domain": "dev-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
-    "qa_front_domain": "qa-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
+    "dev_front_domain": "{{cookiecutter.dev_back_domain}}",
+    "dev_tiles_domain": "a-dev-tiles-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
+
     "qa_back_domain": "qa-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
-    "staging_front_domain": "staging-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
+    "qa_front_domain": "{{cookiecutter.qa_back_domain}}",
+    "qa_tiles_domain": "a-qa-tiles-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
+
     "staging_back_domain": "staging-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
-    "prod_front_domain": "terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
+    "staging_front_domain": "{{cookiecutter.staging_back_domain}}",
+    "staging_tiles_domain": "a-staging-tiles-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
+
     "prod_back_domain": "terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
+    "prod_front_domain": "{{cookiecutter.prod_back_domain}}",
+    "prod_tiles_domain": "a-tiles-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",
+
     "staging_host": "{{cookiecutter.staging_front_domain.replace('-{0}.'.format(cookiecutter.lname), '-docker-{0}.'.format(cookiecutter.lname))}}",
     "qa_host": "{{cookiecutter.qa_front_domain.replace('-{0}.'.format(cookiecutter.lname), '-docker-{0}.'.format(cookiecutter.lname))}}",
     "dev_host": "{{cookiecutter.dev_front_domain.replace('-{0}.'.format(cookiecutter.lname), '-docker-{0}.'.format(cookiecutter.lname))}}",
