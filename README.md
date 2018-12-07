@@ -18,8 +18,7 @@ virtualenv --python=python3 ~/tools/cookiecutter
     cd ~/.cookiecutters/cookiecutter-terra-back \
         && git fetch origin && git reset --hard origin/master \
         && cd -
-    cookiecutter --no-input -o /destination \
-        -f ~/out_dir \
+    cookiecutter --no-input -f -o ~/out_dir \
         https://github.com/makinacorpus/cookiecutter-terra-back.git \
         tld_domain=makina-corpus.net name=Oppm \
         git_ns=Terralego/Customers/Oppm \
