@@ -9,7 +9,7 @@ import os
 import subprocess
 
 # Workaround cookiecutter no support of symlinks
-TEMPLATE = 'cookiecutter-terra-back'
+TEMPLATE = 'cookiecutter-terra{{cookiecutter.app_suffix}}'
 SYMLINKS = {
     ".ansible/scripts/setup_vaults.sh": "cops_wrapper.sh",  #noqa
     ".ansible/scripts/setup_corpusops.sh": "cops_wrapper.sh",  #noqa
@@ -21,21 +21,19 @@ SYMLINKS = {
     ".ansible/scripts/edit_vault.sh": "cops_wrapper.sh",  #noqa
     ".ansible/scripts/print_env.sh": "call_ansible.sh",  #noqa
     ".ansible/scripts/setup_ansible.sh": "cops_wrapper.sh",  #noqa
-    ".ansible/playbooks/ping.yml": "../../local/terra-back-deploy/.ansible/playbooks/ping.yml",  #noqa
-    ".ansible/playbooks/roles/terralegoback_vars": "../../../local/terra-back-deploy/.ansible/playbooks/roles/terralegoback_vars/",  #noqa
-    ".ansible/playbooks/roles/terralegoback": "../../../local/terra-back-deploy/.ansible/playbooks/roles/terralegoback",  #noqa
-    ".ansible/playbooks/app.yml": "../../local/terra-back-deploy/.ansible/playbooks/app.yml",  #noqa
-    ".ansible/playbooks/deploy_key_setup.yml": "../../local/terra-back-deploy/.ansible/playbooks/deploy_key_setup.yml",  #noqa
-    ".ansible/playbooks/deploy_key_teardown.yml": "../../local/terra-back-deploy/.ansible/playbooks/deploy_key_teardown.yml",  #noqa
-    ".ansible/playbooks/site.yml": "../../local/terra-back-deploy/.ansible/playbooks/site.yml",  #noqa
-    "crontab": "local/terra-back-deploy/crontab",  #noqa
-    "tox.ini": "local/terra-back-deploy/tox.ini",  #noqa
-    "apt.txt": "local/terra-back-deploy/apt.txt",  #noqa
-    "Dockerfile": "local/terra-back-deploy/Dockerfile",  #noqa
+    ".ansible/playbooks/ping.yml": "../../local/terra{{cookiecutter.app_suffix}}-deploy/.ansible/playbooks/ping.yml",  #noqa
+    ".ansible/playbooks/roles/terralegoback_vars": "../../../local/terra{{cookiecutter.app_suffix}}-deploy/.ansible/playbooks/roles/terralegoback_vars/",  #noqa
+    ".ansible/playbooks/roles/terralegoback": "../../../local/terra{{cookiecutter.app_suffix}}-deploy/.ansible/playbooks/roles/terralegoback",  #noqa
+    ".ansible/playbooks/app.yml": "../../local/terra{{cookiecutter.app_suffix}}-deploy/.ansible/playbooks/app.yml",  #noqa
+    ".ansible/playbooks/deploy_key_setup.yml": "../../local/terra{{cookiecutter.app_suffix}}-deploy/.ansible/playbooks/deploy_key_setup.yml",  #noqa
+    ".ansible/playbooks/deploy_key_teardown.yml": "../../local/terra{{cookiecutter.app_suffix}}-deploy/.ansible/playbooks/deploy_key_teardown.yml",  #noqa
+    ".ansible/playbooks/site.yml": "../../local/terra{{cookiecutter.app_suffix}}-deploy/.ansible/playbooks/site.yml",  #noqa
+    "tox.ini": "local/terra{{cookiecutter.app_suffix}}-deploy/tox.ini",  #noqa
+    "Dockerfile": "local/terra{{cookiecutter.app_suffix}}-deploy/Dockerfile",  #noqa
 }
 GITSCRIPT = """
 set -ex
-git init
+if [ ! -e .git ];then git init;fi
 git remote rm origin || /bin/true
 git remote add origin {{cookiecutter.git_project_url}}
 git add .
@@ -56,11 +54,11 @@ git submodule add -f {{cookiecutter.egg_project_url}} \
 def sym(i, target):
     print('* Symlink: {0} -> {1}'.format(i, target))
     d = os.path.dirname(i)
-    if os.path.exists('local/terra-back-deploy'):
-        remove_tree('local/terra-back-deploy')
+    if os.path.exists('local/terra{{cookiecutter.app_suffix}}-deploy'):
+        remove_tree('local/terra{{cookiecutter.app_suffix}}-deploy')
     if d and not os.path.exists(d):
         os.makedirs(d)
-    if os.path.exists(i):
+    if os.path.exists(i) or os.path.islink(i):
         if os.path.isdir(i):
             remove_tree(i)
         else:
