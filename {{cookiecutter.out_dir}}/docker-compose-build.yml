@@ -1,7 +1,7 @@
 version: '3.7'
 x-images:
-  django: &django
+  {{cookiecutter.app_type}}: &{{cookiecutter.app_type}}
     build: {context: "."}
 services:
-  cron: {<<: [ *django ]}
-  django: {<<: [ *django ]}
+  cron: {<<: [ *{{cookiecutter.app_type}} ]}
+  {{cookiecutter.app_type}}: {<<: [ *{{cookiecutter.app_type}} ]}

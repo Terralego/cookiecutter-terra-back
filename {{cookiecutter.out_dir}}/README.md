@@ -85,7 +85,7 @@ After a last verification of the files, to run with docker, just type:
 
 **⚠️ Remember ⚠️** to use `./control.sh up` to start the stack before.
 
-## Start a shell inside the django container
+## Start a shell inside the {{cookiecutter.app_type}} container
 
 - for user shell
 

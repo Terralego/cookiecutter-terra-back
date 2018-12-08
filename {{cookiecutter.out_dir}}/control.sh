@@ -8,7 +8,7 @@ if  [[ -n $SHELL_DEBUG ]];then set -x;fi
 
 shopt -s extglob
 
-APP=django
+APP={{cookiecutter.app_type}}
 APP_USER=${APP_USER:-${APP}}
 APP_CONTAINER=${APP_CONTAINER:-${APP}}
 DEBUG=${DEBUG-}
@@ -153,7 +153,7 @@ do_yamldump() {
     $@ $bargs
 }
 
-# Django specific
+# {{cookiecutter.app_type.upper()}} specific
 #  python: enter python interpreter
 do_python() {
     do_usershell ../venv/bin/python $@
@@ -164,7 +164,7 @@ do_manage() {
     do_python manage.py $@
 }
 
-#  runserver [$args]: launch app container in foreground (using django runserver)
+#  runserver [$args]: launch app container in foreground (using {{cookiecutter.app_type}} runserver)
 do_runserver() {
     local bargs=${@:-0.0.0.0:8000}
     stop_containers
@@ -181,8 +181,8 @@ do_test() {
     local bargs=${@:-tests}
     stop_containers
     set -- vv do_shell \
-        "chown django ../.tox
-        && gosu django ../venv/bin/tox -c ../tox.ini -e $bargs"
+        "chown {{cookiecutter.app_type}} ../.tox
+        && gosu {{cookiecutter.app_type}} ../venv/bin/tox -c ../tox.ini -e $bargs"
     "$@"
 }
 
@@ -200,7 +200,7 @@ do_main() {
     actions="$actions|yamldump|stop|usershell"
     actions="$actions|init|up|fg|pull|build|down)"
     app_actions="runserver|tests|test|coverage|linting|manage|python"
-    actions="$actions|$django_actions"
+    actions="$actions|${{cookiecutter.app_type}}_actions"
     action=${1-}
     if [[ -n $@ ]];then shift;fi
     set_dc

@@ -8,15 +8,15 @@ services:
   backup: {<<: [ *bypass ]}
   nginx: {<<: [ *bypass ]}
   backup: {<<: [ *bypass ]}
-  django:
+  {{cookiecutter.app_type}}:
     environment:
-      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-project.settings.dev}
+      - DJANGO_SETTINGS_MODULE=${{{cookiecutter.app_type.upper()}}_SETTINGS_MODULE:-project.settings.dev}
       - NO_MIGRATE=1
       - NO_COLLECT_STATIC=1
       - NO_GUNICORN=1
-    command: "gosu django ../start.sh"
+    command: "gosu {{cookiecutter.app_type}} ../start.sh"
     volumes:
-      - ./local/terra-back-deploy/prod/sudoer:/etc/sudoers.d/django
+      - ./local/terra-back-deploy/prod/sudoer:/etc/sudoers.d/{{cookiecutter.app_type}}
       - ./lib:/code/lib
       - ./local:/code/local
       - ./src:/code/src

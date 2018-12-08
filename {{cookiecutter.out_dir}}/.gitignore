@@ -2,7 +2,7 @@
 *.pyc
 __pycache__
 
-# Django local settings
+# {{cookiecutter.app_type.upper()}} local settings
 /src/project/settings/local.py
 
 # Docker local settings

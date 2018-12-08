@@ -3,6 +3,7 @@
     "lname": "{{cookiecutter.name|lower}}",
     "out_dir": ".",
     "tld_domain": "example.com",
+    "app_type": "django",
     "app_suffix": "-back",
 
     "dev_back_domain": "dev-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}",

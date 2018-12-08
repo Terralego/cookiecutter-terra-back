@@ -193,7 +193,7 @@ The high level infrastructure:
             |
             +--- nginx: main reverse proxy
             |
-            +--- django: app
+            +--- {{cookiecutter.app_type}}: app
             |            (share a special 'static' & medias volume
             |             nginx which serve the application statis & medias)
             |

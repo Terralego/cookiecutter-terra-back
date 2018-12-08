@@ -1,12 +1,12 @@
 version: '3.7'
 x-images:
   env: &env {env_file: [.env, docker.env]}
-  django: &django
+  {{cookiecutter.app_type}}: &{{cookiecutter.app_type}}
     <<: [ *env ]
     tty: true
-    image: "${DJANGO_IMAGE}:${DJANGO_IMAGE_VERSION}"
+    image: "${{{cookiecutter.app_type.upper()}}_IMAGE}:${{{cookiecutter.app_type.upper()}}_IMAGE_VERSION}"
     environment:
-      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-project.settings.prod}
+      - DJANGO_SETTINGS_MODULE=${{{cookiecutter.app_type.upper()}}_SETTINGS_MODULE:-project.settings.prod}
     depends_on:
       - db
       - redis
@@ -38,7 +38,7 @@ services:
     restart: always
     image: nginx:1.14-alpine
     depends_on:
-      - django
+      - {{cookiecutter.app_type}}
     volumes:
       - ./local/terra-back-deploy/prod/etc/nginx/vhost.conf.template:/etc/nginx/conf.d/vhost.conf.template
       - mediafiles:/public/media/:ro
@@ -52,12 +52,12 @@ services:
       > /etc/nginx/conf.d/default.conf
       && nginx -g 'daemon off;'"
       # Replace hostname in vhost.conf
-  django:
-    <<: [ *django ]
+  {{cookiecutter.app_type}}:
+    <<: [ *{{cookiecutter.app_type}} ]
   cron:
-    <<: [ *django ]
+    <<: [ *{{cookiecutter.app_type}} ]
     depends_on:
-      - django
+      - {{cookiecutter.app_type}}
     command: /bin/sh /code/cron.sh
   backup:
     <<: [ *env ]
@@ -79,6 +79,6 @@ volumes:
   redis:
   mediafiles:
   statics:
-    name: "${DJANGO_NAME}back-statics-${DJANGO_IMAGE_VERSION}"
+    name: "${{{cookiecutter.app_type.upper()}}_NAME}back-statics-${{{cookiecutter.app_type.upper()}}_IMAGE_VERSION}"
     external: false
   logs:
