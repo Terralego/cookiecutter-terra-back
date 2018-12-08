@@ -199,8 +199,8 @@ do_main() {
     local actions="@(shell|usage|usage|install_docker|setup_corpusops"
     actions="$actions|yamldump|stop|usershell"
     actions="$actions|init|up|fg|pull|build|down)"
-    app_actions="runserver|tests|test|coverage|linting|manage|python"
-    actions="$actions|${{cookiecutter.app_type}}_actions"
+    actions_{{cookiecutter.app_type}}="runserver|tests|test|coverage|linting|manage|python"
+    actions="$actions|$actions_{{cookiecutter.app_type}}"
     action=${1-}
     if [[ -n $@ ]];then shift;fi
     set_dc
