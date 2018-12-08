@@ -2,10 +2,11 @@
 
 All following commands must be run only once at project installation.
 
+
 ## First clone
 
 ```sh
-git clone --recursive {{cookiecutter.git_url}}
+git clone --recursive {{cookiecutter.git_project_url}}
 git submodule init --recursive  # only the fist time
 git submodule upate
 ```
@@ -24,6 +25,7 @@ local/*/bin/cops_apply_role --become \
 ... or follow official procedures for
   [docker](https://docs.docker.com/install/#releases) and
   [docker-compose](https://docs.docker.com/compose/install/).
+
 
 ## Configuration
 
@@ -140,3 +142,21 @@ docker volume rm $id
 
 ## Doc for deployment on environments
 - [See here](./.ansible/README.md)
+
+## FAQ
+
+If you get troubles with the nginx docker env restarting all the time, try recreating it :
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d --no-deps --force-recreate nginx backup
+```
+
+If you get the same problem with the django docker env :
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml stop django db
+docker volume rm oppm-postgresql # check with docker volume ls
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d db
+# wait fot postgis to be installed
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up django
+```
