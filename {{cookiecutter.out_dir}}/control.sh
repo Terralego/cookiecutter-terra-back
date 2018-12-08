@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+THISSCRIPT=$0
 W="$(dirname $(readlink -f $0))"
 
 SHELL_DEBUG=${SHELL_DEBUG-${SHELLDEBUG}}
@@ -46,10 +47,13 @@ _shell() {
     "$@"
 }
 
+#  usershell $user [$args]: open shell inside container as \$APP_USER
 do_usershell() { _shell $APP_CONTAINER $APP_USER $@;}
 
+#  shell [$args]: open root shell inside \$APP_CONTAINER
 do_shell()     { _shell $APP_CONTAINER root      $@;}
 
+#  install_docker: install docker and docker-compose on ubuntu
 do_install_docker() {
     vv .ansible/scripts/download_corpusops.sh
     vv .ansible/scripts/setup_corpusops.sh
@@ -57,10 +61,12 @@ do_install_docker() {
         local/*/*/corpusops.roles/services_virt_docker/role.yml
 }
 
+#  pull [$args]: pull stack container images
 do_pull() {
     vv $DC pull $@
 }
 
+#  up [$args]: start stack
 do_up() {
     local bars=$@
     set -- vv $DC up
@@ -68,38 +74,33 @@ do_up() {
     $@ $bargs
 }
 
+#  down [$args]: down stack
 do_down() {
     local bargs=$@
     set -- vv $DC down
     $@ $bargs
 }
 
+#  stop [$args]: stop
 do_stop() {
     local bargs=$@
     set -- vv $DC stop
     $@ $bargs
 }
 
+#  stop_containers [$args]: stop containers (app_container by default)
 stop_containers() {
     for i in ${@:-$APP_CONTAINER};do $DC stop $i;done
 }
 
-do_runserver() {
-    local bargs=${@:-0.0.0.0:8000}
-    stop_containers
-    do_shell \
-    ". ../venv/bin/activate
-    && ./manage.py migrate
-    && ./manage.py runserver $bargs"
-}
 
-do_run_server() { do_runserver $@; }
-
+#  fg: launch app container in foreground (using entrypoint)
 do_fg() {
     stop_containers
     vv $DC run --rm --no-deps --service-ports $APP_CONTAINER $@
 }
 
+#  build [$args]: rebuild app containers ($BUILD_CONTAINERS)
 do_build() {
     local bargs="$@" bp=""
     if [[ -n $BUILD_PARALLEL ]];then
@@ -112,46 +113,20 @@ do_build() {
     $@ $bargs
 }
 
-do_test() {
-    local bargs=${@:-tests}
-    stop_containers
-    set -- vv do_shell \
-        "chown django ../.tox
-        && gosu django ../venv/bin/tox -c ../tox.ini -e $bargs"
-    "$@"
-}
 
-do_tests() { do_test $@; }
-
-do_linting() { do_test linting; }
-
-do_coverage() { do_test coverage; }
-
+#  usage: show this help
 do_usage() {
-    echo "$0:
-    install_docker: install docker and docker compose on ubuntu
-    init: copy base configuration files from defaults if not existing
-    pull [\$args]: pull stack container images
-    up [\$args]: start stack
-    down [\$args]: down stack
-    stop [\$args]: stop containers
-    tests: run tests
-    linting: run linting tests
-    coverage: run coverage tests
-    runserver [\$args]: launch app container in foreground (using django runserver)
-    fg: launch app container in foreground (using entrypoint)
-    shell [\$args]: open root shell inside \$APP_CONTAINER
-    usershell [\$args]: open shell inside container as \$APP_USER
-    build [\$args]: rebuild app containers ($BUILD_CONTAINERS)
-    yamldump [\$file]: dump yaml file with anchors resolved
-
-    defaults:
+    echo "$0:"
+    # Show autodoc help
+    awk '{ if ($0 ~ /^#[^!]/) { gsub(/^#/, "", $0); print $0 } }' "$THISSCRIPT"
+    echo " Defaults:
         \$BUILD_CONTAINERS: $BUILD_CONTAINERS
         \$APP_CONTAINER: $APP_CONTAINER
         \$APP_USER: $APP_USER
     "
 }
 
+#  init: copy base configuration files from defaults if not existing
 do_init() {
     for d in  $( \
         find $DIST_FILES_FOLDERS -mindepth 1 -maxdepth 1 -name "*.dist" -type f )
@@ -168,14 +143,7 @@ do_init() {
     done
 }
 
-do_python() {
-    do_usershell ../venv/bin/python $@
-}
-
-do_manage() {
-    do_python manage.py $@
-}
-
+#  yamldump [$file]: dump yaml file with anchors resolved
 do_yamldump() {
     local bargs=$@
     if [ -e local/corpusops.bootstrap/venv/bin/activate ];then
@@ -185,11 +153,54 @@ do_yamldump() {
     $@ $bargs
 }
 
+# Django specific
+#  python: enter python interpreter
+do_python() {
+    do_usershell ../venv/bin/python $@
+}
+
+#  manage [$args]: run manage.py commands
+do_manage() {
+    do_python manage.py $@
+}
+
+#  runserver [$args]: launch app container in foreground (using django runserver)
+do_runserver() {
+    local bargs=${@:-0.0.0.0:8000}
+    stop_containers
+    do_shell \
+    ". ../venv/bin/activate
+    && ./manage.py migrate
+    && ./manage.py runserver $bargs"
+}
+
+do_run_server() { do_runserver $@; }
+
+#  tests [$tests]: run tests
+do_test() {
+    local bargs=${@:-tests}
+    stop_containers
+    set -- vv do_shell \
+        "chown django ../.tox
+        && gosu django ../venv/bin/tox -c ../tox.ini -e $bargs"
+    "$@"
+}
+
+do_tests() { do_test $@; }
+
+#  linting: run linting tests
+do_linting() { do_test linting; }
+
+#  coverage: run coverage tests
+do_coverage() { do_test coverage; }
+
 do_main() {
     local args=${@:-usage}
-    local actions="@(shell|usage|usershell|usage|install_docker|setup_corpusops"
-    actions="$actions|coverage|linting|manage|python|yamldump|stop"
-    actions="$actions|init|up|fg|pull|build|runserver|down|run_server|tests|test)"
+    local actions="@(shell|usage|usage|install_docker|setup_corpusops"
+    actions="$actions|yamldump|stop|usershell"
+    actions="$actions|init|up|fg|pull|build|down)"
+    app_actions="runserver|tests|test|coverage|linting|manage|python"
+    actions="$actions|$django_actions"
     action=${1-}
     if [[ -n $@ ]];then shift;fi
     set_dc
