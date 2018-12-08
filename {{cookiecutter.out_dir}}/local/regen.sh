@@ -9,7 +9,7 @@ venv=${venv:-$HOME/tools/cookiecutter/activate}
 if [ -e "$venv/bin/activate" ];then . "$venv/bin/activate";fi
 set -e
 u=${COOKIECUTTER-${1-}}
-if [[ -z "$u" ]];then
+if [[ -z "$u" ]];then
     u="$HOME/.cookiecutters/cookiecutter-terra{{cookiecutter.app_suffix}}"
     if [ ! -e "$u" ];then
         u="https://github.com/makinacorpus/$(basename $u).git"
