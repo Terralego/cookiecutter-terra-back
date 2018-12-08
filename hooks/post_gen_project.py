@@ -29,9 +29,7 @@ SYMLINKS = {
     ".ansible/playbooks/deploy_key_teardown.yml": "../../local/terra-back-deploy/.ansible/playbooks/deploy_key_teardown.yml",  #noqa
     ".ansible/playbooks/site.yml": "../../local/terra-back-deploy/.ansible/playbooks/site.yml",  #noqa
     "crontab": "local/terra-back-deploy/crontab",  #noqa
-    "requirements.txt": "local/terra-back-deploy/requirements.txt",  #noqa
     "tox.ini": "local/terra-back-deploy/tox.ini",  #noqa
-    "requirements-dev.txt": "local/terra-back-deploy/requirements-dev.txt",  #noqa
     "apt.txt": "local/terra-back-deploy/apt.txt",  #noqa
     "Dockerfile": "local/terra-back-deploy/Dockerfile",  #noqa
 }
