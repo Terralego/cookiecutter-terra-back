@@ -3,7 +3,7 @@ x-{{cookiecutter.app_type}}: &{{cookiecutter.app_type}}
   volumes:
   - ./local.py:/code/src/project/settings/local.py
   environment:
-  - DJANGO_SETTINGS_MODULE=${{{cookiecutter.app_type.upper()}}_SETTINGS_MODULE:-project.settings.prod}
+  - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-project.settings.prod}
 services:
   nginx:
     ports:

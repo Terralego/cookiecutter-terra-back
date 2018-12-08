@@ -4,9 +4,9 @@ x-images:
   {{cookiecutter.app_type}}: &{{cookiecutter.app_type}}
     <<: [ *env ]
     tty: true
-    image: "${{{cookiecutter.app_type.upper()}}_IMAGE}:${{{cookiecutter.app_type.upper()}}_IMAGE_VERSION}"
+    image: "${{'{'}}{{cookiecutter.app_type.upper()}}_IMAGE}:${{'{'}}{{cookiecutter.app_type.upper()}}_IMAGE_VERSION}"
     environment:
-      - DJANGO_SETTINGS_MODULE=${{{cookiecutter.app_type.upper()}}_SETTINGS_MODULE:-project.settings.prod}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-project.settings.prod}
     depends_on:
       - db
       - redis
@@ -79,6 +79,6 @@ volumes:
   redis:
   mediafiles:
   statics:
-    name: "${{{cookiecutter.app_type.upper()}}_NAME}back-statics-${{{cookiecutter.app_type.upper()}}_IMAGE_VERSION}"
+    name: "${{'{'}}{{cookiecutter.app_type.upper()}}_NAME}back-statics-${{'{'}}{{cookiecutter.app_type.upper()}}_IMAGE_VERSION}"
     external: false
   logs:
