@@ -16,7 +16,7 @@ services:
       - NO_GUNICORN=1
     command: "gosu django ../start.sh"
     volumes:
-      - ./local/terra-back-deploy/prod/sudoer://etc/sudoers.d/django
+      - ./local/terra-back-deploy/prod/sudoer:/etc/sudoers.d/django
       - ./lib:/code/lib
       - ./local:/code/local
       - ./src:/code/src
