@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from .base import *  # noqa
+
 # SECURITY #
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
