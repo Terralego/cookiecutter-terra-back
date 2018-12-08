@@ -8,13 +8,16 @@ out="$(dirname $out2)/$(basename $out2)_pre"
 venv=${venv:-$HOME/tools/cookiecutter/activate}
 if [ -e "$venv/bin/activate" ];then . "$venv/bin/activate";fi
 set -e
-u="$HOME/.cookiecutters/cookiecutter-terra{{cookiecutter.app_suffix}}"
-if [ ! -e "$u" ];then
-    u="https://github.com/makinacorpus/$(basename $u).git"
-else
-    cd "$u"
-    git fetch origin
-    git pull --rebase
+u=${COOKIECUTTER-${1-}}
+if [[ -z "$u" ]];then
+    u="$HOME/.cookiecutters/cookiecutter-terra{{cookiecutter.app_suffix}}"
+    if [ ! -e "$u" ];then
+        u="https://github.com/makinacorpus/$(basename $u).git"
+    else
+        cd "$u"
+        git fetch origin
+        git pull --rebase
+    fi
 fi
 if [ -e "$out" ];then vv rm -rf "$out";fi
 vv cookiecutter --no-input -o "$out" -f "$u" \
