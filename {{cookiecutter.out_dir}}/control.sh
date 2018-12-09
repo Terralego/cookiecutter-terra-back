@@ -113,16 +113,16 @@ do_build() {
     $@ $bargs
 }
 
-
 #  usage: show this help
 do_usage() {
     echo "$0:"
     # Show autodoc help
-    awk '{ if ($0 ~ /^#[^!]/) { gsub(/^#/, "", $0); print $0 } }' "$THISSCRIPT"
+    awk '{ if ($0 ~ /^#[^!]/) { \
+                gsu(/^#/, "", $0); print $0 } }' "$THISSCRIPT"
     echo " Defaults:
-        \$BUILD_CONTAINERS: $BUILD_CONTAINERS
-        \$APP_CONTAINER: $APP_CONTAINER
-        \$APP_USER: $APP_USER
+        \$BUILD_CONTAINERS (default: $BUILD_CONTAINERS)
+        \$APP_CONTAINER: (default: $APP_CONTAINER)
+        \$APP_USER: (default: $APP_USER)
     "
 }
 
@@ -196,11 +196,11 @@ do_coverage() { do_test coverage; }
 
 do_main() {
     local args=${@:-usage}
-    local actions="@(shell|usage|usage|install_docker|setup_corpusops"
+    local actions="shell|usage|install_docker|setup_corpusops"
     actions="$actions|yamldump|stop|usershell"
-    actions="$actions|init|up|fg|pull|build|down)"
+    actions="$actions|init|up|fg|pull|build|down"
     actions_{{cookiecutter.app_type}}="runserver|tests|test|coverage|linting|manage|python"
-    actions="$actions|$actions_{{cookiecutter.app_type}}"
+    actions="@($actions|$actions_{{cookiecutter.app_type}})"
     action=${1-}
     if [[ -n $@ ]];then shift;fi
     set_dc
