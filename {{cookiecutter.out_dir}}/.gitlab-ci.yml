@@ -146,19 +146,23 @@ build_images:
   tags: ["{{cookiecutter.fname_slug}}-ci"]
   stage: tests
   variables: {PRELOAD_IMAGES: ""}
+  script:
+  - &launch_test_stack |-
+    sh -c 'for i in $DOCKER_BUILT_SERVICES;
+     do $D_COMPOSE up -d --force-recreate --no-deps $i;done'
 
 tests:
   <<: [ *tests_tpl ]
   coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
   script:
-  - for i in $DOCKER_BUILT_SERVICES; do $D_COMPOSE up -d --force-recreate --no-deps \$i;done
+  - *launch_test_stack
   - sh -c "\$D_COMPOSE run --rm -v \$PWD/tox.ini:/code/tox.ini -T -u {{cookiecutter.app_type}} {{cookiecutter.app_type}}
     ../venv/bin/tox -c ../tox.ini -e tests,coverage"
 
 linting:
   <<: [ *tests_tpl ]
   script:
-  - $D_COMPOSE up -d --force-recreate --no-deps $DOCKER_SERVICES
+  - *launch_test_stack
   - sh -c "\$D_COMPOSE run --rm -v \$PWD/tox.ini:/code/tox.ini -T -u {{cookiecutter.app_type}} {{cookiecutter.app_type}}
     ../venv/bin/tox -c ../tox.ini -e linting"
 
