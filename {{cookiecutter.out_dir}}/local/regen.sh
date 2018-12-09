@@ -21,13 +21,10 @@ if [[ -z "$u" ]];then
 fi
 if [ -e "$out" ];then vv rm -rf "$out";fi
 vv cookiecutter --no-input -o "$out" -f "$u" \
-        tld_domain="{{cookiecutter.tld_domain}}" \
-        name="{{cookiecutter.name}}" \
-        git_ns="{{cookiecutter.git_ns}}"  \
-        dev_port="{{cookiecutter.dev_port}}" \
-        staging_port="{{cookiecutter.staging_port}}" \
-        qa_port="{{cookiecutter.qa_port}}" \
-        prod_port="{{cookiecutter.prod_port}}"
+    {% for i, val in cookiecutter.items() %}{% if
+        i not in ['_template']%}{{i}}="{{val}}" \
+    {%endif%}{%endfor %}
+# to finish template loop
 # sync the gen in a second folder for intermediate regenerations
 dvv rsync -aA \
     --include "local/terra-*" \
