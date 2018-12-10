@@ -8,7 +8,11 @@ out="$(dirname $out2)/$(basename $out2)_pre"
 venv=${venv:-$HOME/tools/cookiecutter/activate}
 if [ -e "$venv/bin/activate" ];then . "$venv/bin/activate";fi
 set -e
-u=${COOKIECUTTER-${1-}}
+if [[ -n "$1" ]] && [ -e $1 ];then
+    COOKIECUTTER="$1"
+    shift
+fi
+u=${COOKIECUTTER-}
 if [[ -z "$u" ]];then
     u="$HOME/.cookiecutters/cookiecutter-terra{{cookiecutter.app_suffix}}"
     if [ ! -e "$u" ];then
@@ -20,10 +24,12 @@ if [[ -z "$u" ]];then
     fi
 fi
 if [ -e "$out" ];then vv rm -rf "$out";fi
+# $1 maybe a dir or an argument
 vv cookiecutter --no-input -o "$out" -f "$u" \
     {% for i, val in cookiecutter.items() %}{% if
         i not in ['_template']%}{{i}}="{{val}}" \
-    {%endif%}{%endfor %}
+    {%endif%}{%endfor %} "$@"
+
 # to finish template loop
 # sync the gen in a second folder for intermediate regenerations
 dvv rsync -aA \

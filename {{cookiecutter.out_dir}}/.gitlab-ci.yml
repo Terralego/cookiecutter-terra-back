@@ -126,7 +126,7 @@ before_script:
 build_images:
   variables:
     PRELOAD_IMAGES: "$LATEST_DOCKER_IMAGE $TAGGUED_DOCKER_IMAGE"
-  tags: ["{{cookiecutter.fname_slug}}-ci"]
+  tags: ["{{cookiecutter.runner_tag}}"]
   stage: build
   script:
   - |-
@@ -143,7 +143,7 @@ build_images:
     && mv -fv \"\${IMAGES_TARBALL}-pending\" \"${IMAGES_TARBALL}\""
 
 .tests_tpl: &tests_tpl
-  tags: ["{{cookiecutter.fname_slug}}-ci"]
+  tags: ["{{cookiecutter.runner_tag}}"]
   stage: tests
   variables: {PRELOAD_IMAGES: ""}
   script:
@@ -168,7 +168,7 @@ linting:
 
 .release_tpl: &release_tpl
   stage: release
-  tags: ["{{cookiecutter.fname_slug}}-ci"]
+  tags: ["{{cookiecutter.runner_tag}}"]
   script:
   # redo the docker login, without the /bin/true, failing if the registry is down
   - sh /docker_login
@@ -197,14 +197,14 @@ release_latest_image: &release_latest_image
 
 # the job will only create a file upon full tests pipeline success
 flag_success_only_on_success:
-  tags: ["{{cookiecutter.fname_slug}}-ci"]
+  tags: ["{{cookiecutter.runner_tag}}"]
   stage: flag_success
   before_script: []
   script:
   - touch "${SUCCESS_FLAG}"
 
 teardown_env:
-  tags: ["{{cookiecutter.fname_slug}}-ci"]
+  tags: ["{{cookiecutter.runner_tag}}"]
   variables:
     PRELOAD_TARBALLS: ""
   stage: teardown
@@ -223,7 +223,7 @@ teardown_env:
   - rm -fv ${IMAGES_TARBALL}* "${SUCCESS_FLAG}"
 
 .deploy_tpl: &deploy_tpl
-  tags: ["{{cookiecutter.fname_slug}}-ci"]
+  tags: ["{{cookiecutter.runner_tag}}"]
   stage: deploy
   when: manual
   allow_failure: false
@@ -305,7 +305,7 @@ deploy_prod:
     url: https://{{cookiecutter.prod_front_domain}}
 
 .manual_job_tpl: &manual_job_tpl
-  tags: ["{{cookiecutter.fname_slug}}-ci"]
+  tags: ["{{cookiecutter.runner_tag}}"]
   allow_failure: true
   stage: manual_jobs
   when: manual

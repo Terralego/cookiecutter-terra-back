@@ -22,3 +22,4 @@ __pycache__
 *.retry
 /.ansible/scripts/ansible_deploy_env
 /local/
+!/local/regen.sh
