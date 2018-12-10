@@ -14,13 +14,15 @@ APP_CONTAINER=${APP_CONTAINER:-${APP}}
 DEBUG=${DEBUG-}
 NO_BACKGROUND=${NO_BACKGROUND-}
 BUILD_PARALLEL=${BUILD_PARALLEL:-1}
-BUILD_CONTAINERS="cron $APP_CONTAINER"
+BUILD_CONTAINERS="$APP_CONTAINER cron"
 EDITOR=${EDITOR:-vim}
 DIST_FILES_FOLDERS=". src/*/settings"
+CONTROL_COMPOSE_FILES="${CONTROL_COMPOSE_FILES:-docker-compose.yml docker-compose-dev.yml}"
+COMPOSE_COMMAND=${COMPOSE_COMMAND:-docker-compose}
 
 set_dc() {
-    local COMPOSE_FILES="${@:-docker-compose.yml docker-compose-dev.yml}"
-    DC=${COMPOSE_COMMAND:-docker-compose}
+    local COMPOSE_FILES="${@:-${CONTROL_COMPOSE_FILES}}"
+    DC="${COMPOSE_COMMAND}"
     for i in $COMPOSE_FILES;do
         DC="${DC} -f $i"
     done
@@ -93,7 +95,6 @@ stop_containers() {
     for i in ${@:-$APP_CONTAINER};do $DC stop $i;done
 }
 
-
 #  fg: launch app container in foreground (using entrypoint)
 do_fg() {
     stop_containers
@@ -108,9 +109,22 @@ do_build() {
     fi
     set -- vv $DCB build $bp
     if [[ -z "$bargs" ]];then
-        bargs=$BUILD_CONTAINERS
+        for i in $BUILD_CONTAINERS;do
+            $@ $i
+        done
+    else
+        $@ $bargs
     fi
-    $@ $bargs
+}
+
+#  buildimages: alias for build
+do_buildimages() {
+    do_build "$@"
+}
+
+#  build_images: alias for build
+do_build_images() {
+    do_build "$@"
 }
 
 #  usage: show this help
@@ -118,7 +132,7 @@ do_usage() {
     echo "$0:"
     # Show autodoc help
     awk '{ if ($0 ~ /^#[^!]/) { \
-                gsu(/^#/, "", $0); print $0 } }' "$THISSCRIPT"
+                gsub(/^#/, "", $0); print $0 } }' "$THISSCRIPT"
     echo " Defaults:
         \$BUILD_CONTAINERS (default: $BUILD_CONTAINERS)
         \$APP_CONTAINER: (default: $APP_CONTAINER)
@@ -198,7 +212,7 @@ do_main() {
     local args=${@:-usage}
     local actions="shell|usage|install_docker|setup_corpusops"
     actions="$actions|yamldump|stop|usershell"
-    actions="$actions|init|up|fg|pull|build|down"
+    actions="$actions|init|up|fg|pull|build|buildimages|down"
     actions_{{cookiecutter.app_type}}="runserver|tests|test|coverage|linting|manage|python"
     actions="@($actions|$actions_{{cookiecutter.app_type}})"
     action=${1-}

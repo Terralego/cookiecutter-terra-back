@@ -11,7 +11,7 @@ x-images:
       - db
       - redis
     working_dir: /code/src
-    command: /bin/bash /code/init.sh
+    command: /bin/bash /code/init/init.sh
     volumes:
       - mediafiles:/code/public/media
       - statics:/code/public/static
