@@ -274,7 +274,7 @@ deploy_dev_after_manual_release:
   script:
   - |-
     .ansible/scripts/call_ansible.sh -vv -l $A_ENV_NAME \
-    "${DEPLOY_PLAYBOOK}" -e "{cops_mixity_docker_tag: dev}"
+    "${DEPLOY_PLAYBOOK}" -e "{cops_terralego_docker_tag: dev}"
 
 deploy_qa:
   <<: [ *deploy_tpl ]
