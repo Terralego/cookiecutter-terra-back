@@ -79,6 +79,9 @@ your vault password. This will create the vaults files `~/.ansiblevault*env*`
     CORPUSOPS_VAULT_PASSWORD='REPLACE_ME_BY_REAL_VAULT_PASSWORD' .ansible/scripts/setup_vaults.sh"
 ```
 
+- Also add that variable ``CORPUSOPS_VAULT_PASSWORD`` in the gitlab CI/CD variables
+- You would certainly also add ``REGISTRY_USER`` & ``REGISTRY_PASSWORD``.
+
 ### <a name="sshkeyvaultsetup"/>Generate ssh deploy key
 
 To <a name="sshkeygen"/> generate a ssh keypair if not present inside your
