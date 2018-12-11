@@ -45,7 +45,8 @@ export CORPUSOPS_VAULT_PASSWORD=SuperVerySecretPassword
 .ansible/scripts/setup_vaults.sh
 ```
 
-Also add that variable ``CORPUSOPS_VAULT_PASSWORD`` in the gitlab CI/CD variables
+- Also add that variable ``CORPUSOPS_VAULT_PASSWORD`` in the gitlab CI/CD variables
+- You would certainly also add ``REGISTRY_USER`` & ``REGISTRY_PASSWORD``.
 
 ### Move vault templates to their encrypted counterparts
 For each file which needs to be crypted
