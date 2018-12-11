@@ -97,7 +97,7 @@ before_script:
 - sh /docker_login || /bin/true
 # workaround as docker-compose doesn't support default shell variable substitution in .env
 - cat .env.dist | envsubst | sed
-  -re "s/^([^=]+_IMAGE_VERSION=).*/\\1build-${CI_PIPELINE_IID}/g"
+  -re "s/^([^=]+_IMAGE_VERSION=.*)latest/\\1build-${CI_PIPELINE_IID}/g"
   -e "s/^(CI_COMMIT_SHA=).*/\\1${CI_COMMIT_SHA}/g" > .env
 - envsubst < docker.env.dist > docker.env
 # Also we only pull images if we got a successful login
@@ -136,8 +136,8 @@ build_images:
         || ( echo "BUILD ERROR: $i" >> /docker_images_errors ) )&
     done;wait;
     if [ -e /docker_images_errors ];then cat /docker_images_errors;exit 1;fi
-  - sh -c "
-    docker inspect \"\${CURRENT_DOCKER_IMAGE}\" >/dev/null
+  - sh -c "set -ex
+    && docker inspect \"\${CURRENT_DOCKER_IMAGE}\" >/dev/null
     && docker save \"\${CURRENT_DOCKER_IMAGE}\"
        | gzip > \"\${IMAGES_TARBALL}-pending\"
     && mv -fv \"\${IMAGES_TARBALL}-pending\" \"${IMAGES_TARBALL}\""
