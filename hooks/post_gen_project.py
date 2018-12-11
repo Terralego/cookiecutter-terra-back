@@ -41,13 +41,14 @@ rm -rf "{{cookiecutter.deploy_project_dir}}"
 git add -f local/regen.sh
 git submodule add -f "{{cookiecutter.deploy_project_url}}" \
              "{{cookiecutter.deploy_project_dir}}"
-git commit -am init
 """
 MOTD = '''
 After having checking in your project, do not remember to add Terralego backend
 code as a git submodule with this command:
 git submodule add -f {{cookiecutter.egg_project_url}} \
         {{cookiecutter.egg_project_dir}}
+After reviewing all changes
+do not forget to commit and push your new/regenerated project
 '''
 
 
