@@ -58,7 +58,7 @@ services:
     <<: [ *{{cookiecutter.app_type}} ]
     depends_on:
       - {{cookiecutter.app_type}}
-    command: /bin/sh /code/cron.sh
+    command: /bin/sh /code/init/cron.sh
   backup:
     <<: [ *env ]
     image: "corpusops/dbsmartbackup:pg10"
