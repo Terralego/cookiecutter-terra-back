@@ -288,7 +288,7 @@ deploy_dev_after_manual_release:
     .ansible/scripts/call_ansible.sh -vv -l $A_ENV_NAME \
     "${DEPLOY_PLAYBOOK}" -e "{cops_terralego_docker_tag: dev}"
 
-deploy_qa:
+deploy_qa: &deploy_qa
   <<: [ *deploy_tpl ]
   only: [tags, master]
   variables:
@@ -298,7 +298,7 @@ deploy_qa:
     name: qa
     url: https://{{cookiecutter.qa_front_domain}}
 
-deploy_staging:
+deploy_staging: &deploy_staging
   <<: [ *deploy_tpl ]
   only: [tags, master]
   variables:
@@ -308,7 +308,7 @@ deploy_staging:
     name: staging
     url: https://{{cookiecutter.staging_front_domain}}
 
-deploy_prod:
+deploy_prod: &deploy_prod
   <<: [ *deploy_tpl ]
   only: [tags, master]
   variables:
@@ -346,3 +346,17 @@ cleanup_all_project_cache:
   before_script: []
   script:
   - rm -rf /cache/$CI_PROJECT_PATH_SLUG
+
+# Allow to immediatly trigger a deploy without waiting for the full pipeline to complete
+# eg: redeploying after only issuing a deploy code or configuration change.
+manual_deploy_dev:
+  <<: [ *manual_job_tpl, *deploy_dev ]
+
+manual_deploy_qa:
+  <<: [ *manual_job_tpl, *deploy_qa ]
+
+manual_deploy_staging:
+  <<: [ *manual_job_tpl, *deploy_staging ]
+
+manual_deploy_prod:
+  <<: [ *manual_job_tpl, *deploy_prod ]
