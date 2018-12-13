@@ -272,6 +272,7 @@ manual_build_image_from_any_commit_as_dev_image:
   <<: [ *build_images, *manual_jobs_on_branches_tpl ]
   stage: manual_dev_build
   when: manual
+  allow_failure: false
 
 manual_release_any_commit_as_dev_image:
   <<: [ *manual_jobs_on_branches_tpl,  *release_taggued_image ]
