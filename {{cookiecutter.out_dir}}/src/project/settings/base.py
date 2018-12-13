@@ -81,7 +81,7 @@ DATABASES = {
 }
 
 SERIALIZATION_MODULES = {
-    # 'geojson': 'custom.layers.serializers.geojson',
+    'geojson': 'terracommon.terra.serializers.geojson',
 }
 
 # Make django configurable via environment
