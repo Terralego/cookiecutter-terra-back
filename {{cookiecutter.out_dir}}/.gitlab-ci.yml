@@ -8,10 +8,10 @@ stages:
   - release
   - teardown
   - deploy
-  - manual_dev_build
-  - manual_dev_release
-  - manual_dev_teardown
-  - manual_dev_deploy
+## - manual_dev_build
+## - manual_dev_release
+## - manual_dev_teardown
+## - manual_dev_deploy
 
 services: ["docker:dind"]
 
@@ -259,36 +259,37 @@ deploy_dev: &deploy_dev
     name: dev
     url: https://{{cookiecutter.dev_front_domain}}
 
-# manual rebuild on any branch except master or tags , no filter
-# and the according deploy job
-# implicitly the deploy job on the branch will auto-deploy the manually built image
-.manual_jobs_on_branches_tpl: &manual_jobs_on_branches_tpl
-  only: [branches, triggers, web, api, schedules]
-  except: [master, tags]
-
-# separate manual launch job to allow concurrent pushing of images
-# when project has multiple images to release
-manual_build_image_from_any_commit_as_dev_image:
-  <<: [ *build_images, *manual_jobs_on_branches_tpl ]
-  stage: manual_dev_build
-  when: manual
-  allow_failure: false
-
-manual_release_any_commit_as_dev_image:
-  <<: [ *manual_jobs_on_branches_tpl,  *release_taggued_image ]
-  stage: manual_dev_release
-  variables:
-    <<: [ *release_vars ]
-    RELEASED_DOCKER_IMAGE: "$DEV_DOCKER_IMAGE"
-
-deploy_dev_after_manual_release:
-  <<: [ *manual_jobs_on_branches_tpl,  *deploy_dev ]
-  stage: manual_dev_deploy
-  script:
-  - |-
-    .ansible/scripts/call_ansible.sh -vv -l $A_ENV_NAME \
-    "${DEPLOY_PLAYBOOK}" -e "{cops_terralego_docker_tag: dev}"
-
+# disable for now as it blocks main pipeline
+## # manual rebuild on any branch except master or tags , no filter
+## # and the according deploy job
+## # implicitly the deploy job on the branch will auto-deploy the manually built image
+## .manual_jobs_on_branches_tpl: &manual_jobs_on_branches_tpl
+##   only: [branches, triggers, web, api, schedules]
+##   except: [master, tags]
+##
+## # separate manual launch job to allow concurrent pushing of images
+## # when project has multiple images to release
+## manual_build_image_from_any_commit_as_dev_image:
+##   <<: [ *build_images, *manual_jobs_on_branches_tpl ]
+##   stage: manual_dev_build
+##   when: manual
+##   allow_failure: false
+##
+## manual_release_any_commit_as_dev_image:
+##   <<: [ *manual_jobs_on_branches_tpl,  *release_taggued_image ]
+##   stage: manual_dev_release
+##   variables:
+##     <<: [ *release_vars ]
+##     RELEASED_DOCKER_IMAGE: "$DEV_DOCKER_IMAGE"
+##
+## deploy_dev_after_manual_release:
+##   <<: [ *manual_jobs_on_branches_tpl,  *deploy_dev ]
+##   stage: manual_dev_deploy
+##   script:
+##   - |-
+##     .ansible/scripts/call_ansible.sh -vv -l $A_ENV_NAME \
+##     "${DEPLOY_PLAYBOOK}" -e "{cops_terralego_docker_tag: dev}"
+##
 deploy_qa: &deploy_qa
   <<: [ *deploy_tpl ]
   only: [tags, master]
