@@ -76,7 +76,7 @@ your vault password. This will create the vaults files `~/.ansiblevault*env*`
 ```sh
 # Replace here SUPER_SECRET_PASSWORD by the vault password
 # Note the leading " " not to have the password in bash history
-    CORPUSOPS_VAULT_PASSWORD='REPLACE_ME_BY_REAL_VAULT_PASSWORD' .ansible/scripts/setup_vaults.sh"
+    CORPUSOPS_VAULT_PASSWORD='REPLACE_ME_BY_REAL_VAULT_PASSWORD' .ansible/scripts/setup_vaults.sh
 ```
 
 - Also add that variable ``CORPUSOPS_VAULT_PASSWORD`` in the gitlab CI/CD variables
