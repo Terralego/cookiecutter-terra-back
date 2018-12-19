@@ -84,6 +84,8 @@ SERIALIZATION_MODULES = {
     'geojson': 'terracommon.terra.serializers.geojson',
 }
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 # Make django configurable via environment
 SETTINGS_ENV_PREFIX = 'DJANGO__'
 # Those settings will throw a launch failure in deploy envs
@@ -151,12 +153,16 @@ def set_prod_settings(g, env):
     g.setdefault('EMAIL_HOST', 'localhost')
     g.setdefault('EMAIL_PORT', 1025)
     g.setdefault('EMAIL_USE_TLS', False)
-    g.setdefault('DEFAULT_FROM_EMAIL', f'{env}-{{cookiecutter.lname}}@{{cookiecutter.tld_domain}}')
+    g.setdefault(
+        'DEFAULT_FROM_EMAIL',
+        '{env}-{{cookiecutter.lname}}@{{cookiecutter.tld_domain}}'.format(env=env)
+    )
     g['CORS_ORIGIN_WHITELIST '] = (
-        f'{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}',  #noqa
+        '{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}'.format(env=env),  #noq
+        '.{{cookiecutter.tld_domain}}'
     )
     g['ALLOWED_HOSTS'] = [
-        f'{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}',
+        '{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}'.format(env=env),
         '.{{cookiecutter.tld_domain}}'
     ]
     return g
