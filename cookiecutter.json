@@ -43,6 +43,7 @@
     "deploy_project_url": "https://github.com/makinacorpus/terra{{cookiecutter.app_suffix}}-deploy.git",
     "deploy_project_dir": "local/{{cookiecutter.deploy_project_url.split('/')[-1].replace('.git', '')}}",
     "egg_project_url": "../../../../Terralego/Core/terra{{cookiecutter.app_suffix}}.git",
+    "with_sentry": "y",
     "egg_project_dir": "lib/{{cookiecutter.egg_project_url.split('/')[-1].replace('.git', '')}}",
     "docker_registry": "registry.{{cookiecutter.infra_domain}}",
     "simple_docker_image": "{{cookiecutter.git_ns.split('/')[0].lower()}}/{{cookiecutter.lname}}{{cookiecutter.app_suffix.replace('-', '')}}",

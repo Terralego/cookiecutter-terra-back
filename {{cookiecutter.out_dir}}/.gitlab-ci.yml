@@ -8,7 +8,6 @@ stages:
   - release
   - teardown
   - deploy
-  - manual_dev_deploy
 
 services: ["docker:dind"]
 
@@ -80,6 +79,7 @@ variables:
 # Indeed, gitlab-ci would not interpret multiple nested variables, eg: $PRELOAD_IMAGES
 # /!\  /!\  /!\
 #
+
 before_script: &top_before_script
 - &pullsubmodules
     cd lib/terra-back && git fetch origin && git reset --hard $TERRABACK_VERSION && cd -
@@ -256,11 +256,18 @@ deploy_dev: &deploy_dev
     name: dev
     url: https://{{cookiecutter.dev_front_domain}}
 
+# manual rebuild on any branch except master or tags , no filter
+# and the according deploy job
+# implicitly the deploy job on the branch will auto-deploy the manually built image
+.manual_jobs_on_branches_tpl: &manual_jobs_on_branches_tpl
+  only: [branches, triggers, web, api, schedules]
+  except: [master, tags]
+
 # As gitlab-ci does not support pipeline branching, for manual dev release, we need
 # to make a last and one-for-all deploy step for non-blocking pipelines when we do a merge request
 manual_dev_release_and_deploy:
   <<: [ *manual_jobs_on_branches_tpl, *deploy_dev, *release_tpl ]
-  stage: manual_dev_deploy
+  stage: manual_jobs
   when: manual
   allow_failure: true
   variables:
@@ -279,7 +286,7 @@ manual_dev_release_and_deploy:
   - *deploy_key_setup
   - |-
     .ansible/scripts/call_ansible.sh -vv -l $A_ENV_NAME \
-    "${DEPLOY_PLAYBOOK}" -e "{cops_{{cookiecutter.app_type}}_docker_tag: dev}"
+    "${DEPLOY_PLAYBOOK}" -e "{cops_terralego_docker_tag: dev}"
 
 deploy_qa: &deploy_qa
   <<: [ *deploy_tpl ]
