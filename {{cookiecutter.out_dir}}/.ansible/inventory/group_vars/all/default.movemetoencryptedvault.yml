@@ -13,3 +13,5 @@ cops_terralego_registries:
 - username: "userA"
   registry: "{{cookiecutter.docker_registry}}"
   password: "superpwd"
+# cops_terralego_sentry_dsn:
+# cops_terralego_mailcatcher_password:
