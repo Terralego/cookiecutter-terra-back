@@ -11,6 +11,7 @@ x-images:
     working_dir: /code/src
     command: /bin/bash /code/init/init.sh
     volumes:
+      - ./src/project/settings/instances:/code/src/project/settings/instances
       - mediafiles:/code/public/media
       - statics:/code/public/static
       - logs:/logs/
