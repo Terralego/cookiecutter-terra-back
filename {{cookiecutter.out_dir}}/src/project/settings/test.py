@@ -3,7 +3,9 @@ import tempfile
 
 from .base import *  # noqa
 
-REST_FRAMEWORK['TEST_REQUEST_DEFAULT_FORMAT'] = 'json'
+for a in INSTALLED_APPS:
+    if 'rest_framework' in a:
+        REST_FRAMEWORK['TEST_REQUEST_DEFAULT_FORMAT'] = 'json'
 
 SECRET_KEY = 'spam-spam-spam-spam'
 
@@ -23,8 +25,13 @@ CACHES = {
     }
 }
 
-g = post_process_settings(globals())
-globals().update(g)
+# Force every loggers to use null handler only. Note that using 'root'
+# logger is not enough if children don't propage.
+for logger in six.itervalues(LOGGING['loggers']):  # noqa
+    logger['handlers'] = ['console']
+
+exec('import {0} as outerns'.format(__name__), globals(), locals())
+post_process_settings(outerns)
 try:
     from .local import *  # noqa
 except ImportError:
