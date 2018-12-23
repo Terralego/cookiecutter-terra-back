@@ -13,7 +13,6 @@ from datetime import timedelta
 from importlib import import_module
 
 import six
-
 from django.utils.log import DEFAULT_LOGGING
 
 
