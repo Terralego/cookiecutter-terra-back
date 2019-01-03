@@ -198,7 +198,7 @@ def check_explicit_settings(globs=None):
             _ = locs_[i]  #noqa
         except KeyError:
             raise Exception('{0} django settings is not defined')
-    globals().update(locals())
+    globals().update(locs_)
     return locals(), globals(), env
 
 
@@ -260,7 +260,7 @@ def post_process_settings(globs=None):
         if 'DEPLOY_ENV' in locs_:
             locs_['RAVEN_CONFIG']['environment'] = locs_['DEPLOY_ENV']
     {%- endif %}
-    globals().update(locals())
+    globals().update(locs_)
     return locals(), globals(), env
 
 
@@ -287,5 +287,5 @@ def set_prod_settings(globs):
         locs_['ALLOWED_HOSTS'] = [
             '{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}'.format(env=env),
             '.{{cookiecutter.tld_domain}}']
-    globals().update(locals())
+    globals().update(locs_)
     return locals(), globals(), env
