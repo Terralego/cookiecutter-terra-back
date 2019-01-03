@@ -71,6 +71,12 @@ def locals_settings_update(locs_, d=None):
     return locs_, d.get('__name__', '').split('.')[-1]
 
 
+def filter_globals(locs_, d=None):
+    if d is None:
+        d = {}
+    return locals_settings_update({}, globals())[0]
+
+
 INSTALLED_APPS = ()
 CUSTOM_APPS = (
     'terracommon.core',
@@ -199,7 +205,7 @@ def check_explicit_settings(globs=None):
         except KeyError:
             raise Exception('{0} django settings is not defined')
     globals().update(locs_)
-    return locals(), globals(), env
+    return locs_, filter_globals(globals()), env
 
 
 def post_process_settings(globs=None):
@@ -261,7 +267,7 @@ def post_process_settings(globs=None):
             locs_['RAVEN_CONFIG']['environment'] = locs_['DEPLOY_ENV']
     {%- endif %}
     globals().update(locs_)
-    return locals(), globals(), env
+    return locs_, filter_globals(globals()), env
 
 
 def set_prod_settings(globs):
@@ -288,4 +294,4 @@ def set_prod_settings(globs):
             '{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}'.format(env=env),
             '.{{cookiecutter.tld_domain}}']
     globals().update(locs_)
-    return locals(), globals(), env
+    return locs_, filter_globals(globals()), env
