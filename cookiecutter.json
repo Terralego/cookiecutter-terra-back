@@ -47,5 +47,6 @@
     "egg_project_dir": "lib/{{cookiecutter.egg_project_url.split('/')[-1].replace('.git', '')}}",
     "docker_registry": "registry.{{cookiecutter.infra_domain}}",
     "simple_docker_image": "{{cookiecutter.git_ns.split('/')[0].lower()}}/{{cookiecutter.lname}}{{cookiecutter.app_suffix.replace('-', '')}}",
-    "docker_image": "{%if cookiecutter.docker_registry%}{{cookiecutter.docker_registry}}/{%endif%}{{cookiecutter.simple_docker_image}}"
+    "docker_image": "{%if cookiecutter.docker_registry%}{{cookiecutter.docker_registry}}/{%endif%}{{cookiecutter.simple_docker_image}}",
+    "py_ver": "3.6"
 }
