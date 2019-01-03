@@ -18,7 +18,7 @@ x-images:
 services:
   mailcatcher:
     <<: [ *env ]
-    image: mailhog/mailhog
+    image: corpusops/mailhog
     hostname: mailcatcher
     volumes: ["mails:/mails"]
     environment:
@@ -40,19 +40,19 @@ services:
         && su mailhog -p -c MailHog
   redis:
     <<: [ *env ]
-    image: redis:4.0-alpine
+    image: corpusops/redis:4.0-alpine
     hostname: redis
     volumes:
       - 'redis:/data'
   db:
     <<: [ *env ]
-    image: makinacorpus/pgrouting:10.1-2.5.4
+    image: corpusops/pgrouting:10.1-2.5.4
     volumes:
       - postgresql:/var/lib/postgresql/data
   nginx:
     <<: [ *env ]
     restart: always
-    image: nginx:1.14-alpine
+    image: corpusops/nginx:1.14-alpine
     depends_on:
       - {{cookiecutter.app_type}}
     volumes:
@@ -66,8 +66,9 @@ services:
       $$FRONT_URL
       '< /etc/nginx/conf.d/vhost.conf.template
       > /etc/nginx/conf.d/default.conf
-      && nginx -g 'daemon off;'"
-      # Replace hostname in vhost.conf
+      && exec /bin/forego.sh"
+    environment:
+    - FOREGO_PROCFILE=/etc/procfiles/nginx_logrotate.Procfile
   {{cookiecutter.app_type}}:
     <<: [ *{{cookiecutter.app_type}} ]
   cron:

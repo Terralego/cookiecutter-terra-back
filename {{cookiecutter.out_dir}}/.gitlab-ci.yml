@@ -177,7 +177,7 @@ build_images: &build_images
 .tests_tpl: &tests_tpl
   tags: ["{{cookiecutter.runner_tag}}"]
   stage: tests
-  variables: {PRELOAD_IMAGES: ""}
+  variables: &test_vars_tpl {PRELOAD_IMAGES: "", CI: "true"}
   script:
   - &launch_test_stack |-
     sh -c 'for i in $DOCKER_BUILT_SERVICES;
