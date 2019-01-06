@@ -18,5 +18,6 @@ libproj-dev
 gdal-bin
 gettext
 postgresql-server-dev-all
+postgresql-client
 tzdata
 libreoffice-writer
