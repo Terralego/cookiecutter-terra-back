@@ -62,6 +62,7 @@ _shell() {
     local bargs="$@"
     local NO_VIRTUALENV=${NO_VIRTUALENV-}
     local NO_NVM=${NO_VIRTUALENV-}
+    local NVMRC=${NVMRC:-.nvmrc}
     local NVM_PATH=${NVM_PATH:-..}
     local NVM_PATHS=${NVMS_PATH:-${NVM_PATH}}
     local VENV_NAME=${VENV_NAME:-$VENV}
