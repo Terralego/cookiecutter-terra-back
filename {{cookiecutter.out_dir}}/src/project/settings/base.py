@@ -314,6 +314,8 @@ def set_prod_settings(globs):
         _locals['CORS_ORIGIN_WHITELIST'] = (
             '{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}'.format(env=env),  #noqa
             '.{{cookiecutter.tld_domain}}')
+        if env in ['dev', 'qa', 'staging']:
+            _locals['CORS_ORIGIN_WHITELIST'] += ('{{cookiecutter.lname}}front.local',)
     if not ALLOWED_HOSTS:
         _locals['ALLOWED_HOSTS'] = [
             '{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}'.format(env=env),
