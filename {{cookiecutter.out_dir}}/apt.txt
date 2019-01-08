@@ -20,4 +20,5 @@ gettext
 postgresql-server-dev-all
 postgresql-client
 tzdata
+libmagic-dev
 libreoffice-writer
