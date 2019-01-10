@@ -14,7 +14,6 @@ services:
       - NO_MIGRATE=1
       - NO_COLLECT_STATIC=1
       - NO_GUNICORN=1
-    command: "gosu {{cookiecutter.app_type}} /code/init/start.sh"
     volumes:
       - ./local/terra-back-deploy/prod/sudoer:/etc/sudoers.d/$APP_TYPE
       - ./local/terra-back-deploy/prod/init.sh:/code/init/init.sh
