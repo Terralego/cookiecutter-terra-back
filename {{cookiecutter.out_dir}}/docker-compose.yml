@@ -96,12 +96,12 @@ services:
     depends_on:
     - db
     environment:
-    - POSTGRES_STARTUP_TIMEOUT=${MINIO_STARTUP_TIMEOUT:-45s}
     entrypoint:
     - /bin/sh
     - '-c'
     - |-
       set -ex
+      POSTGRES_STARTUP_TIMEOUT=$${POSTGRES_STARTUP_TIMEOUT:-45s}
       flag=/started_$$(echo $$POSTGRES_DB|sed -re "s![/:]!__!g")
       if [ -e "$$flag" ];then rm -f "$$flag";fi
       echo "Try connection to pgsql: $$POSTGRES_DB & wait for db init" >&2 \
@@ -112,7 +112,7 @@ services:
           "postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@db/$$POSTGRES_DB"\
       );then touch $$flag && break;fi;done )&
       set -x \
-      && dockerize -wait file://$$flag -timeout $${MINIO_STARTUP_TIMEOUT:-30s} \
+      && dockerize -wait file://$$flag -timeout $${POSTGRES_STARTUP_TIMEOUT} \
       && while true;do printf "HTTP/1.1 200 OK\n\nstarted"| ( nc -l -p 80 || /bin/true);done
 volumes:
   backupdb-logs:
