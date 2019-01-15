@@ -7,5 +7,6 @@ isort
 pylama
 tblib
 eradicate
+pdb_clone
 
 xlrd
