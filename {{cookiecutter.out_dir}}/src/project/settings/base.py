@@ -309,13 +309,15 @@ def set_prod_settings(globs):
     ALLOWED_HOSTS = _locals.setdefault('ALLOWED_HOSTS', [])
     CORS_ORIGIN_WHITELIST = _locals.setdefault(
         'CORS_ORIGIN_WHITELIST', tuple())
+    CORS_ORIGIN_REGEX_WHITELIST = _locals.setdefault(
+        'CORS_ORIGIN_REGEX_WHITELIST', tuple())
     # those settings by default are empty, we need to handle this case
     if not CORS_ORIGIN_WHITELIST:
         _locals['CORS_ORIGIN_WHITELIST'] = (
             '{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}'.format(env=env),  #noqa
             '.{{cookiecutter.tld_domain}}')
-        if env in ['dev', 'qa', 'staging']:
-            _locals['CORS_ORIGIN_WHITELIST'] += ('{{cookiecutter.lname}}front.local',)
+    if env in ['dev', 'qa', 'staging']:
+        _locals['CORS_ORIGIN_REGEX_WHITELIST'] += ('^(https?://){{cookiecutter.lname}}front.local(:[0-9]+)?($|/)', )
     if not ALLOWED_HOSTS:
         _locals['ALLOWED_HOSTS'] = [
             '{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}'.format(env=env),
