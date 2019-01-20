@@ -79,10 +79,12 @@ variables:
 # /!\  /!\  /!\
 #
 before_script: &top_before_script
+{%-if cookiecutter.use_submodule_for_deploy_code%}
 - &pullsubmodules
     cd lib/terra-back && git fetch origin && git reset --hard $TERRABACK_VERSION && cd -
     &&
     cd local/terra-back-deploy && git fetch origin && git reset --hard $TERRABACK_DEPLOY_VERSION && cd -
+{%endif%}
 - for i in
     /cache/$CI_PROJECT_PATH_SLUG/docker-images
     /cache/$CI_PROJECT_PATH_SLUG/apt
@@ -160,16 +162,16 @@ build_images: &build_images
   stage: build
   script:
   - &build_step1 |-
+    set +e
+    set -x
     for i in $DOCKER_BUILT_SERVICES;do
-      ( echo "$D_COMPOSE -f docker-compose-prod.yml -f docker-compose-build.yml build $i" >&2 )&
-      (       $D_COMPOSE -f docker-compose-prod.yml -f docker-compose-build.yml build $i \
-        || ( echo "BUILD ERROR: $i" >> /docker_images_errors ) )&
-    done;wait;
+        $D_COMPOSE -f docker-compose-prod.yml -f docker-compose-build.yml build $i \
+        || ( echo "BUILD ERROR: $i" >> /docker_images_errors )
+    done
     for i in $DOCKER_BUILT_SERVICES;do
-      ( echo "$D_COMPOSE -f docker-compose-build.yml -f docker-compose-build-dev.yml build $i" >&2 )&
-      (       $D_COMPOSE -f docker-compose-build.yml -f docker-compose-build-dev.yml build $i \
-        || ( echo "BUILD ERROR: $i" >> /docker_images_errors ) )&
-    done;wait;
+        $D_COMPOSE -f docker-compose-build.yml -f docker-compose-build-dev.yml build $i \
+        || ( echo "BUILD ERROR: $i" >> /docker_images_errors )
+    done
     if [ -e /docker_images_errors ];then cat /docker_images_errors;exit 1;fi
   - &build_step2 sh -c "set -ex
     && docker inspect \"\${CURRENT_DOCKER_IMAGE}\" >/dev/null
@@ -184,26 +186,30 @@ build_images: &build_images
 .tests_tpl: &tests_tpl
   tags: ["{{cookiecutter.runner_tag}}"]
   stage: tests
-  variables: &test_vars_tpl {PRELOAD_IMAGES: "", CI: "true"}
+  variables: &test_vars_tpl
+    PRELOAD_IMAGES: ""
+    CI: "true"
+    CONTROL_COMPOSE_FILES: docker-compose.yml
   script:
   - &launch_test_stack |-
-    sh -c 'for i in $DOCKER_BUILT_SERVICES;
-     do $D_COMPOSE up -d --force-recreate --no-deps $i;done'
+    sh -c 'for i in $DOCKER_SERVICES;
+     do ./control.sh up --force-recreate --no-deps $i;done'
 
-tests:
-  <<: [ *tests_tpl ]
-  coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
-  script:
-  - *launch_test_stack
-  - sh -c "\$D_COMPOSE run --rm -v \$PWD/tox.ini:/code/tox.ini -T -u {{cookiecutter.app_type}} {{cookiecutter.app_type}}
-    ../venv/bin/tox -c ../tox.ini -e tests,coverage"
+{% set testsc = (not cookiecutter.test_tests) and '#' or '' -%}
+{{testsc}}tests:
+{{testsc}}  <<: [ *tests_tpl ]
+{{testsc}}  coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
+{{testsc}}  script:
+{{testsc}}  - *launch_test_stack
+{{testsc}}  - ./control.sh test
+{{testsc}}  - ./control.sh coverage
 
-linting:
-  <<: [ *tests_tpl ]
-  script:
-  - *launch_test_stack
-  - sh -c "\$D_COMPOSE run --rm -v \$PWD/tox.ini:/code/tox.ini -T -u {{cookiecutter.app_type}} {{cookiecutter.app_type}}
-    ../venv/bin/tox -c ../tox.ini -e linting"
+{% set lintingc = (not cookiecutter.test_linting) and '#' or '' -%}
+{{lintingc}}linting:
+{{lintingc}}  <<: [ *tests_tpl ]
+{{lintingc}}  script:
+{{lintingc}}  - *launch_test_stack
+{{lintingc}}  - ./control.sh linting
 
 .release_tpl: &release_tpl
   stage: release
@@ -276,8 +282,10 @@ teardown_env: &teardown_env
     DEPLOY_PLAYBOOK: ".ansible/playbooks/app.yml"
     NO_SILENT: ""
   before_script:
-  # make this in only one block to be easily reusable in deploy jobs
+{%-if cookiecutter.use_submodule_for_deploy_code%}
   - *pullsubmodules
+{%endif%}
+  # make this in only one block to be easily reusable in deploy jobs
   - &deploy_setup set -e;vv(){ echo "$@">&2;"$@"; };
     if [ "x${A_ENV_NAME}" = x ];then
     echo "\$A_ENV_NAME is not set, bailing out" >&2 ;exit 1;fi;

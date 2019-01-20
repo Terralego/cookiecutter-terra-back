@@ -4,18 +4,22 @@ x-images:
   {{cookiecutter.app_type}}: &{{cookiecutter.app_type}}
     <<: [ *env ]
     tty: true
+    # latest image is only used in prod (without dev & test tools)
     image: "${{'{'}}{{cookiecutter.app_type.upper()}}_IMAGE}:${{'{'}}{{cookiecutter.app_type.upper()}}_IMAGE_VERSION}-dev"
     depends_on:
-      - db
-      - redis
-      - setup_postgres
+    - db
+    - redis
+    {% if 'post' in cookiecutter.db_mode%}- setup_postgres{%endif%}
     working_dir: /code/src
     command: >-
-      sh -c '
-      dockerize -wait http://setup_postgres -timeout $${POSTGRES_STARTUP_TIMEOUT}
-      && /bin/bash /code/init/init.sh'
+      sh -c ':\{% if 'post' in cookiecutter.db_mode %}
+      && dockerize -wait http://setup_postgres -timeout $${POSTGRES_STARTUP_TIMEOUT}
+      && {%endif%}/bin/bash /code/init/init.sh'
     volumes:
-      - ./src/project/settings/instances:/code/src/project/settings/instances
+      {%- if not cookiecutter.remove_cron %}
+      - ./crontab:/etc/cron.d/{{cookiecutter.app_type}}
+      {%- endif %}
+      - ./src/{{cookiecutter.django_settings.replace('.', '/')}}/instances:/code/src/{{cookiecutter.django_settings.replace('.', '/')}}/instances
       - mediafiles:/code/public/media
       - statics:/code/public/static
       - logs:/logs/
@@ -44,19 +48,19 @@ services:
         && su mailhog -p -c MailHog
   redis:
     <<: [ *env ]
-    image: corpusops/redis:4.0-alpine
+    image: "{{cookiecutter.redis_image}}"
     hostname: redis
     volumes:
       - 'redis:/data'
   db:
     <<: [ *env ]
-    image: corpusops/pgrouting:10.1-2.5.4
+    image: "{{cookiecutter["{0}_image".format(cookiecutter.db_mode)]}}"
     volumes:
       - postgresql:/var/lib/postgresql/data
   nginx:
     <<: [ *env ]
     restart: always
-    image: corpusops/nginx:1.14-alpine
+    image: "{{cookiecutter.nginx_image}}"
     depends_on:
       - {{cookiecutter.app_type}}
     volumes:
@@ -72,11 +76,17 @@ services:
     - SUPERVISORD_CONFIGS=/etc/supervisor.d/cron /etc/supervisor.d/nginx
   {{cookiecutter.app_type}}:
     <<: [ *{{cookiecutter.app_type}} ]
+  {%- if not cookiecutter.remove_cron %}
   cron:
     <<: [ *{{cookiecutter.app_type}} ]
+    command: >-
+      sh -c ':\{% if 'post' in cookiecutter.db_mode %}
+      && dockerize -wait http://setup_postgres -timeout $${POSTGRES_STARTUP_TIMEOUT}
+      && {%endif%}/bin/bash /code/init/cron.sh'
     depends_on:
       - {{cookiecutter.app_type}}
     command: /bin/sh /code/init/cron.sh
+  {%-endif%}
   backup:
     <<: [ *env ]
     image: "corpusops/dbsmartbackup:pg10"
@@ -90,6 +100,7 @@ services:
     <<: [ *env ]
     image: makinacorpus/convertit
     hostname: convertit
+{% if 'post' in cookiecutter.db_mode %}
   setup_postgres:
     <<: [ *env ]
     image: corpusops/pgrouting:10.1-2.5.4
@@ -105,14 +116,14 @@ services:
       if [ -e "$$flag" ];then rm -f "$$flag";fi
       echo "Try connection to pgsql: $$POSTGRES_DB & wait for db init" >&2 \
       && ( while true;do if ( \
-        echo "select 1 from zip_lookup limit 1;\
-          select 1 from spatial_ref_sys limit 1;select postgis_version();"\
+        echo "{% if 'gis' in cookiecutter.db_mode%}select 1 from spatial_ref_sys limit 1;select postgis_version();{%else%}select 1{%endif%}"\
         | psql -v ON_ERROR_STOP=1 \
           "postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@db/$$POSTGRES_DB"\
       );then touch $$flag && break;fi;done )&
       set -x \
       && dockerize -wait file://$$flag -timeout $${POSTGRES_STARTUP_TIMEOUT} \
       && while true;do printf "HTTP/1.1 200 OK\n\nstarted"| ( nc -l -p 80 || /bin/true);done
+{% endif %}
 volumes:
   backupdb-logs:
   backupdb-dumps:

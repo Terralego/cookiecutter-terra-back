@@ -97,6 +97,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 EMAIL_HOST = 'mailcatcher'
 EMAIL_PORT = 1025
 
+SWAGGER_ENABLED = False
+
 ###############################################################################
 # Environment settings routines, compliant with 12Factor: https://12factor.net/
 #  The settings are loaded (first has more priority):

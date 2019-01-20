@@ -9,4 +9,4 @@ cops_terralego_docker_tag: "{{'{{'}}cops_terralego_gitref.replace('master', 'lat
 
 cops_terralego_postgres_startup_timeout: 45s
 cops_terralego_docker_env_extra: |-
-  POSTGRES_STARTUP_TIMEOUT={{cops_terralego_postgres_startup_timeout}}
+  POSTGRES_STARTUP_TIMEOUT={{'{{'}}cops_terralego_postgres_startup_timeout}}

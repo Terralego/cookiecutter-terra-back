@@ -9,4 +9,5 @@ globals().update(globs_)
 # hosts = ['0.0.0.0', 'www.mixity.co', 'mixity.co',]
 # CORS_ORIGIN_WHITELIST = CORS_ORIGIN_WHITELIST + tuple(hosts)
 # ALLOWED_HOSTS.extend(hosts)
+SWAGGER_ENABLED = True
 # vim:set et sts=4 ts=4 tw=80:
