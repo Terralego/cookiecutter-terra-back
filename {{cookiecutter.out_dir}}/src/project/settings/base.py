@@ -319,7 +319,7 @@ def set_prod_settings(globs):
             '{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}'.format(env=env),  #noqa
             '.{{cookiecutter.tld_domain}}')
     if env in ['dev', 'qa', 'staging']:
-        _locals['CORS_ORIGIN_REGEX_WHITELIST'] += ('^(https?://){{cookiecutter.lname}}front.local(:[0-9]+)?($|/)', )
+        _locals['CORS_ORIGIN_REGEX_WHITELIST'] += ('^(https?://){{cookiecutter.lname}}front.local(:[0-9]+)?($|/)',)
     if not ALLOWED_HOSTS:
         _locals['ALLOWED_HOSTS'] = [
             '{env}-terralego-{{cookiecutter.lname}}.{{cookiecutter.tld_domain}}'.format(env=env),
