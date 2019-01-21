@@ -9,14 +9,14 @@ x-images:
     depends_on:
     - db
     - redis
-    {% if 'post' in cookiecutter.db_mode%}- setup_postgres{%endif%}
+    {% if 'post' in cookiecutter.db_mode%}- setup-postgres{%endif%}
     working_dir: /code/src
     command:
     - sh
     - '-c'
     - >-
       :{% if 'post' in cookiecutter.db_mode %}
-      && dockerize -wait http://setup_postgres -timeout $${POSTGRES_STARTUP_TIMEOUT}
+      && dockerize -wait http://setup-postgres -timeout $${POSTGRES_STARTUP_TIMEOUT}
       && {%endif%}/bin/bash /code/init/init.sh
     volumes:
       {%- if not cookiecutter.remove_cron %}
@@ -87,7 +87,7 @@ services:
     - '-c'
     - >-
       :{% if 'post' in cookiecutter.db_mode %}
-      && dockerize -wait http://setup_postgres -timeout $${POSTGRES_STARTUP_TIMEOUT}
+      && dockerize -wait http://setup-postgres -timeout $${POSTGRES_STARTUP_TIMEOUT}
       && {%endif%}/bin/bash /code/init/cron.sh
     depends_on:
       - {{cookiecutter.app_type}}
@@ -106,7 +106,7 @@ services:
     image: makinacorpus/convertit
     hostname: convertit
 {% if 'post' in cookiecutter.db_mode %}
-  setup_postgres:
+  setup-postgres:
     <<: [ *env ]
     image: corpusops/pgrouting:10.1-2.5.4
     depends_on:
