@@ -76,7 +76,7 @@ services:
       CONF_PREFIX=FRONT_ confenvsubst.sh /etc/nginx/conf.d/default.conf.template
       && exec /bin/supervisord.sh"
     environment:
-    - SUPERVISORD_CONFIGS=/etc/supervisor.d/cron /etc/supervisor.d/nginx
+    - SUPERVISORD_CONFIGS=/etc/supervisor.d/cron /etc/supervisor.d/nginx /etc/supervisor.d/rsyslog
   {{cookiecutter.app_type}}:
     <<: [ *{{cookiecutter.app_type}} ]
   {%- if not cookiecutter.remove_cron %}
