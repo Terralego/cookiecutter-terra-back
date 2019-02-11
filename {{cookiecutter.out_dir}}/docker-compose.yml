@@ -71,9 +71,11 @@ services:
       - mediafiles:/public/media/:ro
       - statics:/public/static/
       - logs:/logs/
+      - certs:/certs/
     command: >
       /bin/sh -c "
-      CONF_PREFIX=FRONT_ confenvsubst.sh /etc/nginx/conf.d/default.conf.template
+      v=/etc/nginx/conf.d/default.conf
+      && frep --overwrite $$v.template:$$v
       && exec /bin/supervisord.sh"
     environment:
     - SUPERVISORD_CONFIGS=/etc/supervisor.d/cron /etc/supervisor.d/nginx /etc/supervisor.d/rsyslog
@@ -140,3 +142,4 @@ volumes:
     external: false
   logs:
   mails:
+  certs:

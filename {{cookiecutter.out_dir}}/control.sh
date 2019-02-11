@@ -201,6 +201,13 @@ do_down() {
     $@ $bargs
 }
 
+#  rm [$args]: down stack
+do_rm() {
+    local bargs=$@
+    set -- vv $DC rm
+    $@ $bargs
+}
+
 #  stop [$args]: stop
 do_stop() {
     local bargs=$@
@@ -325,7 +332,7 @@ do_main() {
     local args=${@:-usage}
     local actions="up_corpusops|shell|usage|install_docker|setup_corpusops"
     actions="$actions|yamldump|stop|usershell|exec|userexec|dexec|duserexec|dcompose"
-    actions="$actions|init|up|fg|pull|build|buildimages|down"
+    actions="$actions|init|up|fg|pull|build|buildimages|down|rm"
     actions_{{cookiecutter.app_type}}="runserver|tests|test|coverage|linting|manage|python"
     actions="@($actions|$actions_{{cookiecutter.app_type}})"
     action=${1-}

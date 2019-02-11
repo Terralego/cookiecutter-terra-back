@@ -183,3 +183,14 @@ docker-compose -f docker-compose.yml -f docker-compose-dev.yml up django
     - If the value is exposed on the environment, whenever you add/edit it, you need to add it
         - to ``docker.env`` & ``docker.env.dist`` in dev
         - To **ansible setup**, [Read this section of the ansible readme](./.ansible/README.md#django-settings-setup).
+
+## Access site in https in dev
+- https://localhost (self signed certificate)
+
+    ```sh
+    ./control.sh up -d --force-create nginx
+    docker-compose exec nginx ps afux|grep openssl
+    #  openssl dhparam -out /certs/dhparams.pem 2048 -> Will take a long time first time
+    #  nginx wont start until this diffie file is generated
+    ```
+

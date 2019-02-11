@@ -6,7 +6,13 @@ x-images:
     restart: "no"
 services:
   backup: {<<: [ *bypass ]}
-  nginx: {<<: [ *bypass ]}
+  nginx:
+    environment:
+    - NO_SSL=
+    - NO_STATICS=''
+    ports:
+    - "80:80"
+    - "443:443"
   backup: {<<: [ *bypass ]}
   {{cookiecutter.app_type}}:
     environment:
