@@ -61,5 +61,6 @@
     "redis_image": "corpusops/redis:4.0-alpine",
     "nginx_image": "corpusops/nginx:1.14-alpine",
     "db_mode": "postgis",
+    "gunicorn_class": "sync",
     "py_ver": "3.6"
 }
