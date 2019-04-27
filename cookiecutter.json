@@ -46,7 +46,7 @@
     "test_linting": "y",
     "fname_slug": "{{'{0}-{1}{2}'.format(cookiecutter.git_ns, cookiecutter.lname, cookiecutter.app_suffix)|lower|replace('/', '-')|replace('_', '-')}}",
     "runner_tag": "{{cookiecutter.fname_slug}}-ci",
-    "deploy_project_url": "https://github.com/makinacorpus/terra{{cookiecutter.app_suffix}}-deploy.git",
+    "deploy_project_url": "https://github.com/Terralego/terra{{cookiecutter.app_suffix}}-deploy.git",
     "deploy_project_dir": "local/{{cookiecutter.deploy_project_url.split('/')[-1].replace('.git', '')}}",
     "egg_project_url": "../../../../Terralego/Core/terra{{cookiecutter.app_suffix}}.git",
     "with_sentry": "y",
